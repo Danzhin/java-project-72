@@ -51,8 +51,8 @@ public class App {
 
     private static HikariDataSource createDataSource() {
         var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(System.getenv()
-            .getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;"));
+        var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        hikariConfig.setJdbcUrl(jdbcUrl);
         return new HikariDataSource(hikariConfig);
     }
 
