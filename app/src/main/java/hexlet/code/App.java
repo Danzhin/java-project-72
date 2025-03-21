@@ -53,6 +53,9 @@ public class App {
         var hikariConfig = new HikariConfig();
         var jdbcDatabaseUrl = System.getenv()
             .getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        if (jdbcDatabaseUrl.startsWith("jdbc:postgresql")) {
+            hikariConfig.setDriverClassName("org.postgresql.Driver"); // Явно указываем драйвер
+        }
         hikariConfig.setJdbcUrl(jdbcDatabaseUrl);
         return new HikariDataSource(hikariConfig);
     }
