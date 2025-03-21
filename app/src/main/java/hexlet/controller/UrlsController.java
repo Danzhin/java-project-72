@@ -12,7 +12,7 @@ import io.javalin.http.NotFoundResponse;
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlsController {
-    
+
     public static void index(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
         var page = new UrlsPage(urls);
@@ -31,5 +31,6 @@ public class UrlsController {
         UrlRepository.save(uname);
         ctx.redirect(NamedRoutes.urlsPath());
     }
-    
+
 }
+

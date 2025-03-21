@@ -23,7 +23,7 @@ public class UrlRepository extends BaseRepository {
             var generatedKeys = prepareStatement.getGeneratedKeys();
             if (!generatedKeys.next()) {
                 throw new SQLException();
-            };
+            }
         }
     }
 
