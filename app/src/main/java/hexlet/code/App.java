@@ -35,7 +35,7 @@ public class App {
 
         try (var statement = dataSource.getConnection().createStatement()) {
             statement.execute(sql);
-        } 
+        }
         BaseRepository.dataSource = dataSource;
 
         var app = Javalin.create(config -> {
@@ -51,7 +51,8 @@ public class App {
 
     private static HikariDataSource createDataSource() {
         var hikariConfig = new HikariConfig();
-        var jdbcDatabaseUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        var jdbcDatabaseUrl = System.getenv()
+            .getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
         hikariConfig.setJdbcUrl(jdbcDatabaseUrl);
         return new HikariDataSource(hikariConfig);
     }
