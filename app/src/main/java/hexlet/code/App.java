@@ -15,6 +15,8 @@ import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.repository.BaseRepository;
 import hexlet.code.util.NamedRoutes;
+import hexlet.controller.HomeController;
+import hexlet.controller.UrlsController;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +32,11 @@ public class App {
 
     private static Javalin getApp() throws IOException, SQLException {
 
-        var dataSource = createDataSource();
+        var hikariConfig = new HikariConfig();
+        var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        hikariConfig.setJdbcUrl(jdbcUrl);
+        var dataSource = new HikariDataSource(hikariConfig);
         var sql = readResourceFile("schema.sql");
-
         try (var statement = dataSource.getConnection().createStatement()) {
             statement.execute(sql);
         }
@@ -43,17 +47,14 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get(NamedRoutes.rootPath(), ctx -> ctx.result("Hello World"));
+        app.get(NamedRoutes.rootPath(), HomeController::index);
+
+        app.post(NamedRoutes.urlsPath(), UrlsController::create);
+        app.get(NamedRoutes.urlsPath(), UrlsController::index);
+        app.get(NamedRoutes.urlPath(), UrlsController::show);
 
         return app;
 
-    }
-
-    private static HikariDataSource createDataSource() {
-        var hikariConfig = new HikariConfig();
-        var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
-        hikariConfig.setJdbcUrl(jdbcUrl);
-        return new HikariDataSource(hikariConfig);
     }
 
     private static String readResourceFile(String fileName) throws IOException {
