@@ -1,6 +1,6 @@
-package hexlet.code.model;
+package hexlet.code.models;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import lombok.Getter;
@@ -14,14 +14,10 @@ public final class Url {
 
     private Long id;
     private String name;
-    private Timestamp createdAt;
-
-    public Url(String name) {
-        this.name = name;
-    }
+    private LocalDateTime createdAt;
 
     public String getFormattedCreatedAt() {
-        return createdAt.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
 }

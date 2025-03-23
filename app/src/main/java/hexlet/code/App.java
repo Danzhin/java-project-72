@@ -13,10 +13,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
-import hexlet.code.repository.BaseRepository;
-import hexlet.code.util.NamedRoutes;
-import hexlet.controller.HomeController;
-import hexlet.controller.UrlsController;
+import hexlet.code.repositories.BaseRepository;
+import hexlet.code.utils.NamedRoutes;
+import hexlet.code.controllers.HomeController;
+import hexlet.code.controllers.UrlController;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import lombok.extern.slf4j.Slf4j;
@@ -49,9 +49,9 @@ public class App {
 
         app.get(NamedRoutes.rootPath(), HomeController::index);
 
-        app.post(NamedRoutes.urlsPath(), UrlsController::create);
-        app.get(NamedRoutes.urlsPath(), UrlsController::index);
-        app.get(NamedRoutes.urlPath(), UrlsController::show);
+        app.post(NamedRoutes.urlsPath(), UrlController::create);
+        app.get(NamedRoutes.urlsPath(), UrlController::index);
+        app.get(NamedRoutes.urlPath(), UrlController::show);
 
         return app;
 

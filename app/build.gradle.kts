@@ -31,6 +31,8 @@ dependencies {
 
     implementation("org.postgresql:postgresql:42.7.2")
 
+    implementation("commons-validator:commons-validator:1.9.0")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
