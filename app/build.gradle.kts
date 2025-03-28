@@ -1,6 +1,7 @@
 plugins {
     application
     checkstyle
+    jacoco
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.freefair.lombok") version "8.6"
 }
@@ -32,6 +33,10 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.2")
 
     implementation("commons-validator:commons-validator:1.9.0")
+
+    implementation("com.konghq:unirest-java:3.14.5")
+
+    implementation("org.jsoup:jsoup:1.19.1")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

@@ -15,7 +15,6 @@ import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.repositories.BaseRepository;
 import hexlet.code.utils.NamedRoutes;
-import hexlet.code.controllers.HomeController;
 import hexlet.code.controllers.UrlController;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -47,11 +46,11 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get(NamedRoutes.rootPath(), HomeController::index);
-
-        app.post(NamedRoutes.urlsPath(), UrlController::create);
-        app.get(NamedRoutes.urlsPath(), UrlController::index);
-        app.get(NamedRoutes.urlPath(), UrlController::show);
+        app.get(NamedRoutes.rootPath(), UrlController::index);
+        app.get(NamedRoutes.urlsPath(), UrlController::showUrls);
+        app.get(NamedRoutes.urlPath(), UrlController::showUrl);
+        app.post(NamedRoutes.urlsPath(), UrlController::createUrl);
+        app.post(NamedRoutes.urlChecksPath(), UrlController::createUrlCheck);
 
         return app;
 
@@ -67,8 +66,7 @@ public class App {
     private static TemplateEngine createTemplateEngine() {
         ClassLoader classLoader = App.class.getClassLoader();
         ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
-        TemplateEngine templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
-        return templateEngine;
+        return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
     private static int getPort() {

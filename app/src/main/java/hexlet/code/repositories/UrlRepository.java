@@ -1,8 +1,7 @@
 package hexlet.code.repositories;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,34 +10,28 @@ import hexlet.code.models.Url;
 
 public class UrlRepository extends BaseRepository {
 
-    public static void save(String name) throws SQLException {
-        var sql = "insert into urls (name, createdAt) values (?, ?)";
+    public static void saveUrl(String name) throws SQLException {
+        var sql = "insert into urls (name, created_at) values (?, ?)";
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
             ) {
-            var createdAt = Timestamp.valueOf(LocalDateTime.now());
             prepareStatement.setString(1, name);
-            prepareStatement.setTimestamp(2, createdAt);
+            prepareStatement.setTimestamp(2, getCurrentDateTime());
             prepareStatement.executeUpdate();
         }
     }
 
-    public static Optional<Url> find(Long id) throws SQLException {
+    public static Optional<Url> findUrl(int id) throws SQLException {
         var sql = "select * from urls where id = ?";
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
-            ) {
-            prepareStatement.setLong(1, id);
-            var resultSet = prepareStatement.executeQuery();
-            if (resultSet.next()) {
-                var name = resultSet.getString("name");
-                var createdAt = resultSet.getTimestamp("createdAt").toLocalDateTime();
-                var url = new Url(id, name, createdAt);
-                return Optional.of(url);
+        ) {
+            prepareStatement.setInt(1, id);
+            try (var resultSet = prepareStatement.executeQuery()) {
+                return resultSet.next() ? Optional.of(resultSetToUrl(resultSet)) : Optional.empty();
             }
-            return Optional.empty();
         }
     }
 
@@ -46,18 +39,14 @@ public class UrlRepository extends BaseRepository {
         var sql = "select * from urls";
         try (
             var connection = dataSource.getConnection();
-            var prepareStatement = connection.prepareStatement(sql)
-            ) {
-            var resultSet = prepareStatement.executeQuery();
-            var result = new ArrayList<Url>();
+            var prepareStatement = connection.prepareStatement(sql);
+            var resultSet = prepareStatement.executeQuery()
+        ) {
+            var urls = new ArrayList<Url>();
             while (resultSet.next()) {
-                var id = resultSet.getLong("id");
-                var name = resultSet.getString("name");
-                var createdAt = resultSet.getTimestamp("createdAt").toLocalDateTime();
-                var url = new Url(id, name, createdAt);
-                result.add(url);
+                urls.add(resultSetToUrl(resultSet));
             }
-            return result;
+            return urls;
         }
     }
 
@@ -69,12 +58,16 @@ public class UrlRepository extends BaseRepository {
         ) {
             prepareStatement.setString(1, name);
             try (var resultSet = prepareStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getBoolean(1);
-                }
+                return resultSet.next() && resultSet.getBoolean(1);
             }
         }
-        return false;
+    }
+
+    private static Url resultSetToUrl(ResultSet resultSet) throws SQLException {
+        var id = resultSet.getInt("id");
+        var name = resultSet.getString("name");
+        var createdAt = resultSet.getTimestamp("created_at").toLocalDateTime();
+        return new Url(id, name, createdAt);
     }
 
 }

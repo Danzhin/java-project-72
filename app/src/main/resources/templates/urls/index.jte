@@ -4,7 +4,9 @@
 @template.layout.page(
     content = @`
         @if(page.getFlash() != null)
-            <p>${page.getFlash()}</p>
+            <div>
+                <p>${page.getFlash()}</p>
+            </div>
         @endif
         <table>
             <thead>

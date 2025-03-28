@@ -9,11 +9,14 @@ import lombok.AllArgsConstructor;
 @Getter
 @Setter
 @AllArgsConstructor
-public final class Url {
+public class UrlCheck {
 
     private int id;
-    private String name;
+    private int urlId;
+    private int statusCode;
+    private String title;
+    private String h1;
+    private String description;
     private LocalDateTime createdAt;
 
 }
-
