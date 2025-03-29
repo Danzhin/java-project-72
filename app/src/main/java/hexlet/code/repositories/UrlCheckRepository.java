@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hexlet.code.models.UrlCheck;
+import hexlet.code.utils.TimestampFormatter;
 
 public class UrlCheckRepository extends BaseRepository {
 
@@ -38,21 +39,21 @@ public class UrlCheckRepository extends BaseRepository {
             try (var resultSet = prepareStatement.executeQuery()) {
                 var result = new ArrayList<UrlCheck>();
                 while (resultSet.next()) {
-                    result.add(resultSetToUrlCheck(resultSet));
+                    result.add(buildUrlCheck(resultSet));
                 }
                 return result;
             }
         }
     }
 
-    private static UrlCheck resultSetToUrlCheck(ResultSet resultSet) throws SQLException {
+    static UrlCheck buildUrlCheck(ResultSet resultSet) throws SQLException {
         var id = resultSet.getInt("id");
         var urlId = resultSet.getInt("url_id");
         var statusCode = resultSet.getInt("status_code");
         var h1 = resultSet.getString("h1");
         var title = resultSet.getString("title");
         var description = resultSet.getString("description");
-        var createdAt = resultSet.getTimestamp("created_at").toLocalDateTime();
+        var createdAt = TimestampFormatter.toString(resultSet.getTimestamp("created_at"));
         return new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
     }
 

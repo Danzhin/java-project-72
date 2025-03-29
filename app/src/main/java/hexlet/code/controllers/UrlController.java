@@ -1,8 +1,8 @@
 package hexlet.code.controllers;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
+import hexlet.code.models.Flash;
 import kong.unirest.Unirest;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.Jsoup;
@@ -29,22 +29,26 @@ public class UrlController {
 
     public static void index(Context ctx) {
         var page = new BasePage();
-        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-danger");
+        page.setFlash(flash);
         ctx.render("index.jte", model("page", page));
     }
 
     public static void showUrls(Context ctx) throws SQLException {
         var urls = UrlRepository.getUrls();
         var page = new UrlsPage(urls);
-        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
+        page.setFlash(flash);
         ctx.render("urls/index.jte", model("page", page));
     }
 
     public static void showUrl(Context ctx) throws SQLException {
         int id = ctx.pathParamAsClass("id", Integer.class).get();
         var url = UrlRepository.findUrl(id).orElseThrow(NotFoundResponse::new);
-        var urlsChecks = UrlCheckRepository.getUrlChecks(id);
-        var page = new UrlPage(url, urlsChecks);
+        var checks = UrlCheckRepository.getUrlChecks(id);
+        var page = new UrlPage(url, checks);
+        var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
+        page.setFlash(flash);
         ctx.render("urls/show.jte", model("page", page));
     }
 
@@ -78,23 +82,18 @@ public class UrlController {
         return protocol + host + port;
     }
 
-    public static void createUrlCheck(Context ctx) throws SQLException, IOException {
+    public static void createUrlCheck(Context ctx) throws SQLException {
         int urlId = ctx.pathParamAsClass("id", Integer.class).get();
         var url = UrlRepository.findUrl(urlId).orElseThrow(NotFoundResponse::new);
-
         var response = Unirest.get(url.getName()).asString();
-        var html = response.getBody();
-        var document = Jsoup.parse(html);
 
         var statusCode = response.getStatus();
-
+        var document = Jsoup.parse(response.getBody());
         var h1Element = document.selectFirst("h1");
         var h1 = (h1Element != null) ? h1Element.text() : null;
-
         var title = document.title();
-
-        var metaDescription = document.selectFirst("meta[name=description]");
-        var description = (metaDescription != null) ? metaDescription.attr("content") : null;
+        var descriptionElement = document.selectFirst("meta[name=description]");
+        var description = (descriptionElement != null) ? descriptionElement.attr("content") : null;
 
         UrlCheckRepository.saveUrlCheck(urlId, statusCode, h1, title, description);
         ctx.sessionAttribute("flash", "Страница успешно проверена");

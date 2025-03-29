@@ -24,7 +24,7 @@ dependencies {
 
     implementation("gg.jte:jte:3.1.16")
 
-    implementation("org.slf4j:slf4j-simple:2.0.17")
+    implementation("ch.qos.logback:logback-classic:1.4.11")
 
     implementation("com.h2database:h2:2.3.232")
 
