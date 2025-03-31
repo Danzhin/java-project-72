@@ -30,13 +30,14 @@ public class App {
     }
 
     private static Javalin getApp() throws IOException, SQLException {
-
         var hikariConfig = new HikariConfig();
         var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
         hikariConfig.setJdbcUrl(jdbcUrl);
         var dataSource = new HikariDataSource(hikariConfig);
         var sql = readResourceFile("schema.sql");
-        try (var statement = dataSource.getConnection().createStatement()) {
+        try (var connection = dataSource.getConnection();
+            var statement = connection.createStatement()
+        ) {
             statement.execute(sql);
         }
         BaseRepository.dataSource = dataSource;
@@ -46,14 +47,13 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get(NamedRoutes.rootPath(), UrlController::index);
-        app.get(NamedRoutes.urlsPath(), UrlController::showUrls);
-        app.get(NamedRoutes.urlPath(), UrlController::showUrl);
-        app.post(NamedRoutes.urlsPath(), UrlController::createUrl);
-        app.post(NamedRoutes.urlChecksPath(), UrlController::createUrlCheck);
+        app.get(NamedRoutes.rootPath(), UrlController::displaySearchForm);
+        app.get(NamedRoutes.urlsPath(), UrlController::displayUrls);
+        app.get(NamedRoutes.urlPath(), UrlController::displayUrl);
+        app.post(NamedRoutes.urlsPath(), UrlController::addUrl);
+        app.post(NamedRoutes.urlChecksPath(), UrlController::addUrlCheck);
 
         return app;
-
     }
 
     private static String readResourceFile(String fileName) throws IOException {

@@ -13,8 +13,10 @@ public class UrlCheckRepository extends BaseRepository {
     public static void saveUrlCheck(int urlId, int statusCode,
                                     String h1, String title,
                                     String description) throws SQLException {
-        var sql = "insert into url_checks (url_id, status_code, h1, title, description, created_at)"
-                + " values (?, ?, ?, ?, ?, ?)";
+        var sql = """
+                INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
@@ -30,7 +32,7 @@ public class UrlCheckRepository extends BaseRepository {
     }
 
     public static List<UrlCheck> getUrlChecks(int urlId) throws SQLException {
-        var sql = "select * from url_checks where url_id = ?";
+        var sql = "SELECT * FROM url_checks WHERE url_id = ?";
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)

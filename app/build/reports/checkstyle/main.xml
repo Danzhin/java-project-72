@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="9.3">
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\App.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\controllers\UrlController.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\dto\BasePage.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\dto\urls\UrlPage.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\dto\urls\UrlsPage.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\models\Flash.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\models\Url.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\models\UrlCheck.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\repositories\BaseRepository.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\repositories\UrlCheckRepository.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\repositories\UrlRepository.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\utils\NamedRoutes.java">
+</file>
+<file name="C:\Users\dronz\OneDrive\Desktop\java-project-72\app\src\main\java\hexlet\code\utils\TimestampFormatter.java">
+</file>
+</checkstyle>

@@ -27,14 +27,14 @@ public class UrlController {
 
     private static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
-    public static void index(Context ctx) {
+    public static void displaySearchForm(Context ctx) {
         var page = new BasePage();
         var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-danger");
         page.setFlash(flash);
         ctx.render("index.jte", model("page", page));
     }
 
-    public static void showUrls(Context ctx) throws SQLException {
+    public static void displayUrls(Context ctx) throws SQLException {
         var urls = UrlRepository.getUrls();
         var page = new UrlsPage(urls);
         var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
@@ -42,7 +42,7 @@ public class UrlController {
         ctx.render("urls/index.jte", model("page", page));
     }
 
-    public static void showUrl(Context ctx) throws SQLException {
+    public static void displayUrl(Context ctx) throws SQLException {
         int id = ctx.pathParamAsClass("id", Integer.class).get();
         var url = UrlRepository.findUrl(id).orElseThrow(NotFoundResponse::new);
         var checks = UrlCheckRepository.getUrlChecks(id);
@@ -52,7 +52,7 @@ public class UrlController {
         ctx.render("urls/show.jte", model("page", page));
     }
 
-    public static void createUrl(Context ctx) throws SQLException {
+    public static void addUrl(Context ctx) throws SQLException {
         try {
             var name = ctx.formParam("url");
             if (!URL_VALIDATOR.isValid(name)) {
@@ -82,7 +82,7 @@ public class UrlController {
         return protocol + host + port;
     }
 
-    public static void createUrlCheck(Context ctx) throws SQLException {
+    public static void addUrlCheck(Context ctx) throws SQLException {
         int urlId = ctx.pathParamAsClass("id", Integer.class).get();
         var url = UrlRepository.findUrl(urlId).orElseThrow(NotFoundResponse::new);
         var response = Unirest.get(url.getName()).asString();
