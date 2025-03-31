@@ -9,7 +9,7 @@ create table urls (
 
 create table url_checks (
     id serial primary key,
-    url_id integer references urls(id),
+    url_id integer references urls(id) on delete cascade,
     status_code integer,
     h1 varchar(255),
     title varchar(255),
