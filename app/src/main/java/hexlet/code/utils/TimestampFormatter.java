@@ -8,10 +8,7 @@ public class TimestampFormatter {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public static String toString(Timestamp dateTime) {
-        if (dateTime == null) {
-            return null;
-        }
-        return dateTime.toLocalDateTime().format(FORMATTER);
+        return dateTime == null ? null : dateTime.toLocalDateTime().format(FORMATTER);
     }
 
 }
