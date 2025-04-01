@@ -1,18 +1,18 @@
-DROP TABLE IF EXISTS urls CASCADE;
-drop table if exists urlChecks;
+DROP TABLE IF EXISTS urls;
+DROP TABLE IF EXISTS url_checks;
 
-create table urls (
-    id serial primary key,
-    name varchar(255),
-    created_at timestamp
+CREATE TABLE urls (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    created_at TIMESTAMP
 );
 
-create table url_checks (
-    id serial primary key,
-    url_id integer references urls(id),
-    status_code integer,
-    h1 varchar(255),
-    title varchar(255),
-    description text,
-    created_at timestamp
-)
+CREATE TABLE url_checks (
+    id SERIAL PRIMARY KEY,
+    url_id INTEGER REFERENCES urls(id),
+    status_code INTEGER,
+    h1 VARCHAR(255),
+    title VARCHAR(255),
+    description TEXT,
+    created_at TIMESTAMP
+);
