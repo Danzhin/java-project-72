@@ -1,0 +1,47 @@
+# Ignore Gradle project-specific cache directory
+.gradle/
+
+# Ignore Gradle build output directory
+build/
+
+# Ignore IntelliJ IDEA project-specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Ignore Eclipse project files (if Eclipse is used alongside IntelliJ IDEA)
+.settings/
+bin/
+.classpath
+.project
+
+# Ignore logs
+**/logs/
+*.log
+
+# Ignore temporary files
+*.swp
+*.swo
+*.tmp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore other IDE-specific files
+.vscode/
+
+# Ignore Java build files
+target/
+out/
+
+# Ignore Maven wrapper files
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+
+# Ignore other specific files
+.factorypath
+
+# Ignore all .gitignore files in subdirectories
+**/.gitignore
