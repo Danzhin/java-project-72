@@ -1,4 +1,4 @@
-drop table if exists urls;
+DROP TABLE urls CASCADE;
 drop table if exists urlChecks;
 
 create table urls (
@@ -9,7 +9,7 @@ create table urls (
 
 create table url_checks (
     id serial primary key,
-    url_id integer references urls(id) on delete cascade,
+    url_id integer references urls(id),
     status_code integer,
     h1 varchar(255),
     title varchar(255),
