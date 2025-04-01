@@ -1,4 +1,4 @@
-DROP TABLE urls CASCADE;
+DROP TABLE IF EXISTS urls CASCADE;
 drop table if exists urlChecks;
 
 create table urls (
