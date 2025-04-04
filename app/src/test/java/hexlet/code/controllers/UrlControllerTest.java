@@ -28,7 +28,7 @@ public class UrlControllerTest {
     @Test
     public void displaySearchFormTest() {
         JavalinTest.test(app, (server, client) -> {
-            var response = client.get(Routes.rootPath());
+            var response = client.get(Routes.ROOT_PATH);
             assertThat(response.code()).isEqualTo(200);
             assertThat(Objects.requireNonNull(response.body()).string()).contains("Анализатор страниц");
         });
@@ -37,7 +37,7 @@ public class UrlControllerTest {
     @Test
     public void displayUrlsTest() {
         JavalinTest.test(app, (server, client) -> {
-            var response = client.get(Routes.urlsPath());
+            var response = client.get(Routes.URLS_PATH);
             var responseBody = Objects.requireNonNull(response.body()).string();
             assertThat(response.code()).isEqualTo(200);
             assertThat(responseBody).contains("https://www.example.com");
@@ -56,6 +56,16 @@ public class UrlControllerTest {
             assertThat(responseBody).contains("h1");
             assertThat(responseBody).contains("title");
             assertThat(responseBody).contains("description");
+        });
+    }
+
+    @Test
+    public void addUrlTest() {
+        JavalinTest.test(app, (server, client) -> {
+            var requestBody = "name=https://www.example.com";
+            var response = client.post(Routes.URLS_PATH, requestBody);
+            assertThat(response.code()).isEqualTo(200);
+            assertThat(Objects.requireNonNull(response.body()).string()).contains("www.example.com");
         });
     }
 

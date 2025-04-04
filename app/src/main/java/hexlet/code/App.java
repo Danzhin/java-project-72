@@ -47,11 +47,11 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get(Routes.rootPath(), UrlController::displaySearchForm);
-        app.get(Routes.urlsPath(), UrlController::displayUrls);
-        app.get(Routes.urlPath(), UrlController::displayUrl);
-        app.post(Routes.urlsPath(), UrlController::addUrl);
-        app.post(Routes.urlChecksPath(), UrlController::addUrlCheck);
+        app.get(Routes.ROOT_PATH, UrlController::displaySearchForm);
+        app.get(Routes.URLS_PATH, UrlController::displayUrls);
+        app.get(Routes.URL_PATH, UrlController::displayUrl);
+        app.post(Routes.URLS_PATH, UrlController::addUrl);
+        app.post(Routes.URLS_CHECKS_PATH, UrlController::addUrlCheck);
 
         return app;
     }

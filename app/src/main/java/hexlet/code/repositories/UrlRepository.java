@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
 
-
 import hexlet.code.models.Url;
 import hexlet.code.models.UrlCheck;
 import hexlet.code.utils.SqlRequests;
@@ -32,22 +31,6 @@ public class UrlRepository extends BaseRepository {
             prepareStatement.setString(1, name);
             prepareStatement.setTimestamp(2, getCurrentDateTime());
             prepareStatement.executeUpdate();
-        }
-    }
-
-    public static List<Url> getUrls() throws SQLException {
-        var sql = SqlRequests.GET_URLS;
-        try (
-            var connection = dataSource.getConnection();
-            var preparedStatement = connection.prepareStatement(sql);
-            var resultSet = preparedStatement.executeQuery()
-        ) {
-            var urls = new ArrayList<Url>();
-            while (resultSet.next()) {
-                var url = buildUrl(resultSet);
-                urls.add(url);
-            }
-            return urls;
         }
     }
 

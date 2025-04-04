@@ -60,15 +60,15 @@ public class UrlController {
             var formattedName = formatName(name);
             if (UrlRepository.containsName(formattedName)) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.redirect(Routes.rootPath());
+                ctx.redirect(Routes.ROOT_PATH);
                 return;
             }
             UrlRepository.saveUrl(name);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
-            ctx.redirect(Routes.urlsPath());
+            ctx.redirect(Routes.URLS_PATH);
         } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.redirect(Routes.rootPath());
+            ctx.redirect(Routes.ROOT_PATH);
         }
     }
 

@@ -26,8 +26,8 @@
 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <div class="navbar-nav">
-                        <a class="nav-link" href="${Routes.rootPath()}">Главная</a>
-                        <a class="nav-link" href="${Routes.urlsPath()}">Сайты</a>
+                        <a class="nav-link" href="${Routes.ROOT_PATH}">Главная</a>
+                        <a class="nav-link" href="${Routes.URLS_PATH}">Сайты</a>
                     </div>
                 </div>
             </div>
