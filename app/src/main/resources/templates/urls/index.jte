@@ -1,4 +1,4 @@
-@import hexlet.code.utils.NamedRoutes
+@import hexlet.code.utils.Routes
 @param hexlet.code.dto.urls.UrlsPage page 
 
 @template.layout.page(
@@ -19,7 +19,7 @@
                 @for(var entry : page.getUrls().entrySet())
                     <tr>
                         <td>${entry.getKey().getId()}</td>
-                        <td><a href="${NamedRoutes.urlPath(entry.getKey().getId())}">${entry.getKey().getName()}</a></td>
+                        <td><a href="${Routes.urlPath(entry.getKey().getId())}">${entry.getKey().getName()}</a></td>
                         <td>${entry.getValue().getCreatedAt()}</td>
                         <td>${entry.getValue().getStatusCode()}</td>
                     </tr>

@@ -1,4 +1,4 @@
-@import hexlet.code.utils.NamedRoutes
+@import hexlet.code.utils.Routes
 @param hexlet.code.dto.urls.UrlPage page 
 
 @template.layout.page(
@@ -25,7 +25,7 @@
             </table>
 
             <h2 class="mt-5">Проверки</h2>
-            <form method="post" action="${NamedRoutes.urlCheckPath(page.getUrl().getId())}">
+            <form method="post" action="${Routes.urlCheckPath(page.getUrl().getId())}">
                 <button type="submit" class="btn btn-primary">Запустить проверку</button>
             </form>
 

@@ -2,20 +2,29 @@ package hexlet.code.repositories;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
+
 
 import hexlet.code.models.Url;
 import hexlet.code.models.UrlCheck;
+import hexlet.code.utils.SqlRequests;
 import hexlet.code.utils.TimestampFormatter;
-
-import static hexlet.code.repositories.UrlCheckRepository.buildUrlCheck;
 
 public class UrlRepository extends BaseRepository {
 
+    private static Url buildUrl(ResultSet resultSet) throws SQLException {
+        var id = resultSet.getInt("id");
+        var name = resultSet.getString("name");
+        var createdAt = TimestampFormatter.toString(resultSet.getTimestamp("created_at"));
+        return new Url(id, name, createdAt);
+    }
+
     public static void saveUrl(String name) throws SQLException {
-        var sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+        var sql = SqlRequests.SAVE_URL;
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
@@ -26,8 +35,24 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static Optional<Url> findUrl(int id) throws SQLException {
-        var sql = "SELECT * FROM urls WHERE id = ?";
+    public static List<Url> getUrls() throws SQLException {
+        var sql = SqlRequests.GET_URLS;
+        try (
+            var connection = dataSource.getConnection();
+            var preparedStatement = connection.prepareStatement(sql);
+            var resultSet = preparedStatement.executeQuery()
+        ) {
+            var urls = new ArrayList<Url>();
+            while (resultSet.next()) {
+                var url = buildUrl(resultSet);
+                urls.add(url);
+            }
+            return urls;
+        }
+    }
+
+    public static Optional<Url> getUrlById(int id) throws SQLException {
+        var sql = SqlRequests.GET_URL_BY_ID;
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
@@ -40,7 +65,7 @@ public class UrlRepository extends BaseRepository {
     }
 
     public static boolean containsName(String name) throws SQLException {
-        var sql = "SELECT EXISTS (SELECT 1 FROM urls WHERE name = ?)";
+        var sql = SqlRequests.CONTAINS_NAME;
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
@@ -52,23 +77,53 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static Map<Url, UrlCheck> getUrls() throws SQLException {
-        var sql = """
-            SELECT
-                urls.id, urls.name,
-                url_checks.*
-            FROM urls
-            LEFT JOIN (
-                SELECT
-                    url_checks.id, url_checks.status_code, url_checks.h1,
-                    url_checks.title, url_checks.description, url_checks.created_at,
-                    url_checks.url_id,  -- добавляем столбец url_id
-                    ROW_NUMBER() OVER (PARTITION BY url_checks.url_id ORDER BY url_checks.created_at DESC) AS rn
-                FROM url_checks
-            ) AS url_checks
-            ON urls.id = url_checks.url_id AND url_checks.rn = 1;
-            """;
+    private static UrlCheck buildUrlCheck(ResultSet resultSet) throws SQLException {
+        var id = resultSet.getInt("id");
+        var urlId = resultSet.getInt("url_id");
+        var statusCode = resultSet.getInt("status_code");
+        var h1 = resultSet.getString("h1");
+        var title = resultSet.getString("title");
+        var description = resultSet.getString("description");
+        var createdAt = TimestampFormatter.toString(resultSet.getTimestamp("created_at"));
+        return new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
+    }
 
+    public static void saveUrlCheck(int urlId, int statusCode, String h1,
+                                    String title, String description) throws SQLException {
+        var sql = SqlRequests.SAVE_URL_CHECK;
+        try (
+            var connection = dataSource.getConnection();
+            var prepareStatement = connection.prepareStatement(sql)
+        ) {
+            prepareStatement.setInt(1, urlId);
+            prepareStatement.setInt(2, statusCode);
+            prepareStatement.setString(3, h1);
+            prepareStatement.setString(4, title);
+            prepareStatement.setString(5, description);
+            prepareStatement.setTimestamp(6, getCurrentDateTime());
+            prepareStatement.executeUpdate();
+        }
+    }
+
+    public static List<UrlCheck> getUrlChecks(int urlId) throws SQLException {
+        var sql = SqlRequests.GET_URL_CHECKS;
+        try (
+            var connection = dataSource.getConnection();
+            var prepareStatement = connection.prepareStatement(sql)
+        ) {
+            prepareStatement.setInt(1, urlId);
+            try (var resultSet = prepareStatement.executeQuery()) {
+                var result = new ArrayList<UrlCheck>();
+                while (resultSet.next()) {
+                    result.add(buildUrlCheck(resultSet));
+                }
+                return result;
+            }
+        }
+    }
+
+    public static Map<Url, UrlCheck> getUrlsWithLatestChecks() throws SQLException {
+        var sql = SqlRequests.GET_URLS_WITH_LATEST_CHECKS;
         try (
             var connection = dataSource.getConnection();
             var preparedStatement = connection.prepareStatement(sql);
@@ -84,11 +139,14 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    private static Url buildUrl(ResultSet resultSet) throws SQLException {
-        var id = resultSet.getInt("id");
-        var name = resultSet.getString("name");
-        var createdAt = TimestampFormatter.toString(resultSet.getTimestamp("created_at"));
-        return new Url(id, name, createdAt);
+    public static void clear() throws SQLException {
+        var sql = SqlRequests.CLEAR;
+        try (
+            var connection = dataSource.getConnection();
+            var statement = connection.createStatement();
+        ) {
+            statement.executeUpdate(sql);
+        }
     }
 
 }

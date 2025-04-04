@@ -1,6 +1,6 @@
 package hexlet.code.utils;
 
-public class NamedRoutes {
+public class Routes {
 
     public static String rootPath() {
         return "/";

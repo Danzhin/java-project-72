@@ -14,7 +14,7 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.repositories.BaseRepository;
-import hexlet.code.utils.NamedRoutes;
+import hexlet.code.utils.Routes;
 import hexlet.code.controllers.UrlController;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -29,7 +29,7 @@ public class App {
         app.start(port);
     }
 
-    private static Javalin getApp() throws IOException, SQLException {
+    public static Javalin getApp() throws IOException, SQLException {
         var hikariConfig = new HikariConfig();
         var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
         hikariConfig.setJdbcUrl(jdbcUrl);
@@ -47,11 +47,11 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get(NamedRoutes.rootPath(), UrlController::displaySearchForm);
-        app.get(NamedRoutes.urlsPath(), UrlController::displayUrls);
-        app.get(NamedRoutes.urlPath(), UrlController::displayUrl);
-        app.post(NamedRoutes.urlsPath(), UrlController::addUrl);
-        app.post(NamedRoutes.urlChecksPath(), UrlController::addUrlCheck);
+        app.get(Routes.rootPath(), UrlController::displaySearchForm);
+        app.get(Routes.urlsPath(), UrlController::displayUrls);
+        app.get(Routes.urlPath(), UrlController::displayUrl);
+        app.post(Routes.urlsPath(), UrlController::addUrl);
+        app.post(Routes.urlChecksPath(), UrlController::addUrlCheck);
 
         return app;
     }

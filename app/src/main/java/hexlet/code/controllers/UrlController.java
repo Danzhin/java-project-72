@@ -1,26 +1,24 @@
 package hexlet.code.controllers;
 
-import java.sql.SQLException;
-
-import hexlet.code.models.Flash;
+import hexlet.code.utils.Routes;
 import kong.unirest.Unirest;
+
 import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.Jsoup;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 
 import hexlet.code.dto.BasePage;
 import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
-import hexlet.code.repositories.UrlCheckRepository;
 import hexlet.code.repositories.UrlRepository;
-import hexlet.code.utils.NamedRoutes;
+import hexlet.code.models.Flash;
 
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
-
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlController {
@@ -31,12 +29,13 @@ public class UrlController {
         var page = new BasePage();
         var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-danger");
         page.setFlash(flash);
+        ctx.status(200);
         ctx.render("index.jte", model("page", page));
     }
 
     public static void displayUrls(Context ctx) throws SQLException {
-        var urls = UrlRepository.getUrls();
-        var page = new UrlsPage(urls);
+        var urlsWithLatestChecks = UrlRepository.getUrlsWithLatestChecks();
+        var page = new UrlsPage(urlsWithLatestChecks);
         var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
         page.setFlash(flash);
         ctx.render("urls/index.jte", model("page", page));
@@ -44,8 +43,8 @@ public class UrlController {
 
     public static void displayUrl(Context ctx) throws SQLException {
         int id = ctx.pathParamAsClass("id", Integer.class).get();
-        var url = UrlRepository.findUrl(id).orElseThrow(NotFoundResponse::new);
-        var checks = UrlCheckRepository.getUrlChecks(id);
+        var url = UrlRepository.getUrlById(id).orElseThrow(NotFoundResponse::new);
+        var checks = UrlRepository.getUrlChecks(id);
         var page = new UrlPage(url, checks);
         var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
         page.setFlash(flash);
@@ -61,30 +60,21 @@ public class UrlController {
             var formattedName = formatName(name);
             if (UrlRepository.containsName(formattedName)) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.redirect(NamedRoutes.rootPath());
+                ctx.redirect(Routes.rootPath());
                 return;
             }
             UrlRepository.saveUrl(name);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
-            ctx.redirect(NamedRoutes.urlsPath());
+            ctx.redirect(Routes.urlsPath());
         } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.redirect(NamedRoutes.rootPath());
+            ctx.redirect(Routes.rootPath());
         }
-    }
-
-    public static String formatName(String name) throws URISyntaxException, MalformedURLException {
-        var uri = new URI(name);
-        var url = uri.toURL();
-        var protocol = url.getProtocol() + "://";
-        var host = url.getHost();
-        var port = url.getPort() == -1 ? "" : ":" + url.getPort();
-        return protocol + host + port;
     }
 
     public static void addUrlCheck(Context ctx) throws SQLException {
         int urlId = ctx.pathParamAsClass("id", Integer.class).get();
-        var url = UrlRepository.findUrl(urlId).orElseThrow(NotFoundResponse::new);
+        var url = UrlRepository.getUrlById(urlId).orElseThrow(NotFoundResponse::new);
         var response = Unirest.get(url.getName()).asString();
 
         var statusCode = response.getStatus();
@@ -95,9 +85,18 @@ public class UrlController {
         var descriptionElement = document.selectFirst("meta[name=description]");
         var description = (descriptionElement != null) ? descriptionElement.attr("content") : null;
 
-        UrlCheckRepository.saveUrlCheck(urlId, statusCode, h1, title, description);
+        UrlRepository.saveUrlCheck(urlId, statusCode, h1, title, description);
         ctx.sessionAttribute("flash", "Страница успешно проверена");
-        ctx.redirect(NamedRoutes.urlPath(urlId));
+        ctx.redirect(Routes.urlPath(urlId));
+    }
+
+    public static String formatName(String name) throws URISyntaxException, MalformedURLException {
+        var uri = new URI(name);
+        var url = uri.toURL();
+        var protocol = url.getProtocol() + "://";
+        var host = url.getHost();
+        var port = url.getPort() == -1 ? "" : ":" + url.getPort();
+        return protocol + host + port;
     }
 
 }
