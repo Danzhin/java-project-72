@@ -11,14 +11,13 @@ import java.util.Optional;
 import hexlet.code.models.Url;
 import hexlet.code.models.UrlCheck;
 import hexlet.code.utils.SqlRequests;
-import hexlet.code.utils.TimestampFormatter;
 
 public class UrlRepository extends BaseRepository {
 
     private static Url buildUrl(ResultSet resultSet) throws SQLException {
         var id = resultSet.getInt("id");
         var name = resultSet.getString("name");
-        var createdAt = TimestampFormatter.toString(resultSet.getTimestamp("created_at"));
+        var createdAt = timestampToString(resultSet.getTimestamp("created_at"));
         return new Url(id, name, createdAt);
     }
 
@@ -34,8 +33,8 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static Optional<Url> getUrlById(int id) throws SQLException {
-        var sql = SqlRequests.GET_URL_BY_ID;
+    public static Optional<Url> readUrlById(int id) throws SQLException {
+        var sql = SqlRequests.READ_URL_BY_ID;
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
@@ -47,15 +46,15 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static boolean containsName(String name) throws SQLException {
-        var sql = SqlRequests.CONTAINS_NAME;
+    public static Optional<Url> readUrlByName(String name) throws SQLException {
+        var sql = SqlRequests.READ_URL_BY_NAME;
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
         ) {
             prepareStatement.setString(1, name);
             try (var resultSet = prepareStatement.executeQuery()) {
-                return resultSet.next() && resultSet.getBoolean(1);
+                return resultSet.next() ? Optional.of(buildUrl(resultSet)) : Optional.empty();
             }
         }
     }
@@ -67,7 +66,7 @@ public class UrlRepository extends BaseRepository {
         var h1 = resultSet.getString("h1");
         var title = resultSet.getString("title");
         var description = resultSet.getString("description");
-        var createdAt = TimestampFormatter.toString(resultSet.getTimestamp("created_at"));
+        var createdAt = timestampToString(resultSet.getTimestamp("created_at"));
         return new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
     }
 
@@ -88,8 +87,8 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static List<UrlCheck> getUrlChecks(int urlId) throws SQLException {
-        var sql = SqlRequests.GET_URL_CHECKS;
+    public static List<UrlCheck> readUrlChecks(int urlId) throws SQLException {
+        var sql = SqlRequests.READ_URL_CHECKS;
         try (
             var connection = dataSource.getConnection();
             var prepareStatement = connection.prepareStatement(sql)
@@ -105,8 +104,8 @@ public class UrlRepository extends BaseRepository {
         }
     }
 
-    public static Map<Url, UrlCheck> getUrlsWithLatestChecks() throws SQLException {
-        var sql = SqlRequests.GET_URLS_WITH_LATEST_CHECKS;
+    public static Map<Url, UrlCheck> readUrlsWithLatestChecks() throws SQLException {
+        var sql = SqlRequests.READ_URLS_WITH_LATEST_CHECKS;
         try (
             var connection = dataSource.getConnection();
             var preparedStatement = connection.prepareStatement(sql);
@@ -119,16 +118,6 @@ public class UrlRepository extends BaseRepository {
                 result.put(url, urlCheck);
             }
             return result;
-        }
-    }
-
-    public static void clear() throws SQLException {
-        var sql = SqlRequests.CLEAR;
-        try (
-            var connection = dataSource.getConnection();
-            var statement = connection.createStatement();
-        ) {
-            statement.executeUpdate(sql);
         }
     }
 

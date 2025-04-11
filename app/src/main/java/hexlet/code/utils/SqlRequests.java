@@ -4,13 +4,11 @@ public class SqlRequests {
 
     public static final String SAVE_URL = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
 
-    public static final String GET_URLS = "SELECT * FROM urls";
+    public static final String READ_URL_BY_ID = "SELECT * FROM urls WHERE id = ?";
 
-    public static final String GET_URL_BY_ID = "SELECT * FROM urls WHERE id = ?";
+    public static final String READ_URL_BY_NAME = "SELECT * FROM urls WHERE name = ?";
 
-    public static final String CONTAINS_NAME = "SELECT EXISTS (SELECT 1 FROM urls WHERE name = ?)";
-
-    public static final String GET_URLS_WITH_LATEST_CHECKS = """
+    public static final String READ_URLS_WITH_LATEST_CHECKS = """
         SELECT
         urls.id, urls.name,
         url_checks.*
@@ -26,18 +24,11 @@ public class SqlRequests {
         ON urls.id = url_checks.url_id AND url_checks.rn = 1;
         """;
 
-
-
     public static final String SAVE_URL_CHECK = """
         INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
         VALUES (?, ?, ?, ?, ?, ?)
         """;
 
-    public static final String GET_URL_CHECKS = "SELECT * FROM url_checks WHERE url_id = ?";
-
-    public static final String CLEAR = """
-        DELETE FROM url_checks;
-        DELETE FROM urls;
-        """;
+    public static final String READ_URL_CHECKS = "SELECT * FROM url_checks WHERE url_id = ?";
 
 }

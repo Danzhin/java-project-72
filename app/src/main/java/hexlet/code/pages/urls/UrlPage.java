@@ -1,8 +1,8 @@
-package hexlet.code.dto.urls;
+package hexlet.code.pages.urls;
 
 import java.util.List;
 
-import hexlet.code.dto.BasePage;
+import hexlet.code.pages.BasePage;
 import hexlet.code.models.Url;
 import hexlet.code.models.UrlCheck;
 import lombok.AllArgsConstructor;

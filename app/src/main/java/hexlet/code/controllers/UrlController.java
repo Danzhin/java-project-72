@@ -11,9 +11,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 
-import hexlet.code.dto.BasePage;
-import hexlet.code.dto.urls.UrlPage;
-import hexlet.code.dto.urls.UrlsPage;
+import hexlet.code.pages.BasePage;
+import hexlet.code.pages.urls.UrlPage;
+import hexlet.code.pages.urls.UrlsPage;
 import hexlet.code.repositories.UrlRepository;
 import hexlet.code.models.Flash;
 
@@ -25,45 +25,45 @@ public class UrlController {
 
     private static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
-    public static void displaySearchForm(Context ctx) {
+    public static void readSearchForm(Context ctx) {
         var page = new BasePage();
         var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-danger");
         page.setFlash(flash);
-        ctx.status(200);
         ctx.render("index.jte", model("page", page));
     }
 
-    public static void displayUrls(Context ctx) throws SQLException {
-        var urlsWithLatestChecks = UrlRepository.getUrlsWithLatestChecks();
+    public static void readUrls(Context ctx) throws SQLException {
+        var urlsWithLatestChecks = UrlRepository.readUrlsWithLatestChecks();
         var page = new UrlsPage(urlsWithLatestChecks);
         var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
         page.setFlash(flash);
         ctx.render("urls/index.jte", model("page", page));
     }
 
-    public static void displayUrl(Context ctx) throws SQLException {
+    public static void readUrl(Context ctx) throws SQLException {
         int id = ctx.pathParamAsClass("id", Integer.class).get();
-        var url = UrlRepository.getUrlById(id).orElseThrow(NotFoundResponse::new);
-        var checks = UrlRepository.getUrlChecks(id);
+        var url = UrlRepository.readUrlById(id).orElseThrow(NotFoundResponse::new);
+        var checks = UrlRepository.readUrlChecks(id);
         var page = new UrlPage(url, checks);
         var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
         page.setFlash(flash);
         ctx.render("urls/show.jte", model("page", page));
     }
 
-    public static void addUrl(Context ctx) throws SQLException {
+    public static void createUrl(Context ctx) throws SQLException {
         try {
             var name = ctx.formParam("url");
             if (!URL_VALIDATOR.isValid(name)) {
                 throw new IllegalArgumentException();
             }
             var formattedName = formatName(name);
-            if (UrlRepository.containsName(formattedName)) {
+            var url = UrlRepository.readUrlByName(formattedName).orElse(null);
+            if (url != null) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
                 ctx.redirect(Routes.ROOT_PATH);
                 return;
             }
-            UrlRepository.saveUrl(name);
+            UrlRepository.saveUrl(formattedName);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.redirect(Routes.URLS_PATH);
         } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
@@ -72,9 +72,9 @@ public class UrlController {
         }
     }
 
-    public static void addUrlCheck(Context ctx) throws SQLException {
+    public static void createUrlCheck(Context ctx) throws SQLException {
         int urlId = ctx.pathParamAsClass("id", Integer.class).get();
-        var url = UrlRepository.getUrlById(urlId).orElseThrow(NotFoundResponse::new);
+        var url = UrlRepository.readUrlById(urlId).orElseThrow(NotFoundResponse::new);
         var response = Unirest.get(url.getName()).asString();
 
         var statusCode = response.getStatus();
