@@ -58,6 +58,7 @@ public class App {
 
     private static String readResourceFile(String fileName) throws IOException {
         var inputStream = App.class.getClassLoader().getResourceAsStream(fileName);
+        assert inputStream != null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             return reader.lines().collect(Collectors.joining("\n"));
         }

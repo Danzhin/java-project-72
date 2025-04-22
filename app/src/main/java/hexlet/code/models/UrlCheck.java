@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 @Setter
 @AllArgsConstructor
 public class UrlCheck {
-    private int id;
+    private Integer id;
     private int urlId;
     private int statusCode;
     private String title;

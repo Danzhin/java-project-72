@@ -46,8 +46,9 @@ public class UrlControllerTest {
     public void readSearchFormTest() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(Routes.ROOT_PATH);
+            var responseBody = Objects.requireNonNull(response.body()).string();
             assertThat(response.code()).isEqualTo(200);
-            assertThat(Objects.requireNonNull(response.body()).string()).contains("Анализатор страниц");
+            assertThat(responseBody).contains("Анализатор страниц");
         });
     }
 
@@ -135,4 +136,6 @@ public class UrlControllerTest {
         });
     }
 
+
 }
+

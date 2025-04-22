@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import hexlet.code.pages.BasePage;
 import hexlet.code.pages.urls.UrlPage;
@@ -19,6 +20,8 @@ import hexlet.code.models.Flash;
 
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import org.jsoup.nodes.Element;
+
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlController {
@@ -76,14 +79,16 @@ public class UrlController {
         int urlId = ctx.pathParamAsClass("id", Integer.class).get();
         var url = UrlRepository.readUrlById(urlId).orElseThrow(NotFoundResponse::new);
         var response = Unirest.get(url.getName()).asString();
+        var document = Jsoup.parse(response.getBody());
 
         var statusCode = response.getStatus();
-        var document = Jsoup.parse(response.getBody());
-        var h1Element = document.selectFirst("h1");
-        var h1 = (h1Element != null) ? h1Element.text() : null;
+        var h1 = Optional.ofNullable(document.selectFirst("h1"))
+                .map(Element::text)
+                .orElse(null);
         var title = document.title();
-        var descriptionElement = document.selectFirst("meta[name=description]");
-        var description = (descriptionElement != null) ? descriptionElement.attr("content") : null;
+        var description = Optional.ofNullable(document.selectFirst("meta[name=description]"))
+                .map(el -> el.attr("content"))
+                .orElse(null);
 
         UrlRepository.saveUrlCheck(urlId, statusCode, h1, title, description);
         ctx.sessionAttribute("flash", "Страница успешно проверена");
