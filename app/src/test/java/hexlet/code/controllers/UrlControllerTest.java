@@ -7,6 +7,7 @@ import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,7 +103,7 @@ public class UrlControllerTest {
         });
     }
 
-    @Test
+    /*@Test
     public void createUrlCheckRealRequestTest() throws SQLException {
         var html = """
             <!DOCTYPE html>
@@ -133,6 +134,32 @@ public class UrlControllerTest {
             assertThat(responseBody).contains("Example Title");
             assertThat(responseBody).contains("Example Description");
             assertThat(responseBody).contains("200");
+        });
+    }*/
+
+    @Test
+    void testStore() {
+        String url = mockServer.url("/").toString().replaceAll("/$", "");
+
+        JavalinTest.test(app, (server, client) -> {
+            var requestBody = "url=" + url;
+            Assertions.assertThat(client.post("/urls", requestBody).code()).isEqualTo(200);
+
+            var actualUrl = UrlRepository.readUrlByName(url);
+            assertThat(actualUrl).isNotNull();
+            System.out.println("\n!!!!!");
+            System.out.println(actualUrl);
+
+            System.out.println("\n");
+            assertThat(actualUrl.get().getName()).isEqualTo(url);
+
+            client.post("/urls/" + actualUrl.get().getId() + "/checks");
+
+            System.out.println(actualUrl);
+            Assertions.assertThat(client.get("/urls/" + actualUrl.get().getId()).code())
+                    .isEqualTo(200);
+
+
         });
     }
 

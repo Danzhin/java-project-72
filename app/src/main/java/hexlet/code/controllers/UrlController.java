@@ -26,7 +26,7 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlController {
 
-    private static final UrlValidator URL_VALIDATOR = new UrlValidator();
+    static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
     public static void readSearchForm(Context ctx) {
         var page = new BasePage();
@@ -55,18 +55,17 @@ public class UrlController {
 
     public static void createUrl(Context ctx) throws SQLException {
         try {
-            var name = ctx.formParam("url");
+            var name = UrlFormatter.normalize(ctx.formParam("url"));
             if (!URL_VALIDATOR.isValid(name)) {
                 throw new IllegalArgumentException();
             }
-            var formattedName = formatName(name);
-            var url = UrlRepository.readUrlByName(formattedName).orElse(null);
+            var url = UrlRepository.readUrlByName(name).orElse(null);
             if (url != null) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
                 ctx.redirect(Routes.ROOT_PATH);
                 return;
             }
-            UrlRepository.saveUrl(formattedName);
+            UrlRepository.saveUrl(name);
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.redirect(Routes.URLS_PATH);
         } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
@@ -95,13 +94,22 @@ public class UrlController {
         ctx.redirect(Routes.urlPath(urlId));
     }
 
-    public static String formatName(String name) throws URISyntaxException, MalformedURLException {
-        var uri = new URI(name);
-        var url = uri.toURL();
-        var protocol = url.getProtocol() + "://";
-        var host = url.getHost();
-        var port = url.getPort() == -1 ? "" : ":" + url.getPort();
-        return protocol + host + port;
+}
+
+class UrlFormatter  {
+
+    static final UrlValidator URL_VALIDATOR = new UrlValidator();
+
+    static String normalize(String name) throws URISyntaxException, MalformedURLException {
+        if (URL_VALIDATOR.isValid(name)) {
+            var uri = new URI(name);
+            var url = uri.toURL();
+            var protocol = url.getProtocol() + "://";
+            var host = url.getHost();
+            var port = url.getPort() == -1 ? "" : ":" + url.getPort();
+            return protocol + host + port;
+        }
+        throw new IllegalArgumentException();
     }
 
 }
