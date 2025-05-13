@@ -1,21 +1,19 @@
-package hexlet.code.controllers;
+package hexlet.code.controller;
 
+import hexlet.code.repository.UrlRepository;
 import hexlet.code.utils.Routes;
 import kong.unirest.Unirest;
 
-import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.Jsoup;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import hexlet.code.pages.BasePage;
-import hexlet.code.pages.urls.UrlPage;
-import hexlet.code.pages.urls.UrlsPage;
-import hexlet.code.repositories.UrlRepository;
+import hexlet.code.models.pages.BasePage;
+import hexlet.code.models.pages.UrlPage;
+import hexlet.code.models.pages.UrlsPage;
 import hexlet.code.models.Flash;
 
 import io.javalin.http.Context;
@@ -25,8 +23,6 @@ import org.jsoup.nodes.Element;
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlController {
-
-    static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
     public static void readSearchForm(Context ctx) {
         var page = new BasePage();
@@ -56,9 +52,6 @@ public class UrlController {
     public static void createUrl(Context ctx) throws SQLException {
         try {
             var name = UrlFormatter.normalize(ctx.formParam("url"));
-            if (!URL_VALIDATOR.isValid(name)) {
-                throw new IllegalArgumentException();
-            }
             var url = UrlRepository.readUrlByName(name).orElse(null);
             if (url != null) {
                 ctx.sessionAttribute("flash", "Страница уже существует");
@@ -96,21 +89,4 @@ public class UrlController {
 
 }
 
-class UrlFormatter  {
-
-    static final UrlValidator URL_VALIDATOR = new UrlValidator();
-
-    static String normalize(String name) throws URISyntaxException, MalformedURLException {
-        if (URL_VALIDATOR.isValid(name)) {
-            var uri = new URI(name);
-            var url = uri.toURL();
-            var protocol = url.getProtocol() + "://";
-            var host = url.getHost();
-            var port = url.getPort() == -1 ? "" : ":" + url.getPort();
-            return protocol + host + port;
-        }
-        throw new IllegalArgumentException();
-    }
-
-}
 

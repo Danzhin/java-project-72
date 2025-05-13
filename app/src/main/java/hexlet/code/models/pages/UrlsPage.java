@@ -1,8 +1,7 @@
-package hexlet.code.pages.urls;
+package hexlet.code.models.pages;
 
 import java.util.Map;
 
-import hexlet.code.pages.BasePage;
 import hexlet.code.models.Url;
 
 import hexlet.code.models.UrlCheck;

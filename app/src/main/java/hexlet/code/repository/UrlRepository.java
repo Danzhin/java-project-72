@@ -1,4 +1,4 @@
-package hexlet.code.repositories;
+package hexlet.code.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,50 +11,24 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.models.Url;
 import hexlet.code.models.UrlCheck;
 
-public class UrlRepository extends BaseRepository {
+public class UrlRepository {
 
-    public static final String SAVE_URL = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+    public static HikariDataSource dataSource;
 
-    public static final String READ_URL_BY_ID = "SELECT * FROM urls WHERE id = ?";
-
-    public static final String READ_URL_BY_NAME = "SELECT * FROM urls WHERE name = ?";
-
-    public static final String READ_URLS_WITH_LATEST_CHECKS = """
-        SELECT
-        urls.id, urls.name,
-        url_checks.*
-        FROM urls
-        LEFT JOIN (
-            SELECT
-                url_checks.id, url_checks.status_code, url_checks.h1,
-                url_checks.title, url_checks.description, url_checks.created_at,
-                url_checks.url_id,
-                ROW_NUMBER() OVER (PARTITION BY url_checks.url_id ORDER BY url_checks.created_at DESC) AS rn
-            FROM url_checks
-        ) AS url_checks
-        ON urls.id = url_checks.url_id AND url_checks.rn = 1;
-        """;
-
-    public static final String SAVE_URL_CHECK = """
-        INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """;
-
-    public static final String READ_URL_CHECKS = "SELECT * FROM url_checks WHERE url_id = ?";
-
-    static Timestamp getCurrentDateTime() {
-        return Timestamp.valueOf(LocalDateTime.now());
-    }
-
-    static String createdAtToString(Timestamp createdAt) {
-        var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return Optional.ofNullable(createdAt)
-                .map(Timestamp::toLocalDateTime)
-                .map(formatter::format)
-                .orElse(null);
+    public static void launch(String jdbcUrl) throws SQLException {
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(jdbcUrl);
+        dataSource = new HikariDataSource(hikariConfig);
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()
+        ) {
+            statement.execute(SqlRequests.LAUNCH);
+        }
     }
 
     private static Url buildUrl(ResultSet resultSet) throws SQLException {
@@ -66,9 +40,9 @@ public class UrlRepository extends BaseRepository {
 
     public static void saveUrl(String name) throws SQLException {
         try (
-            var connection = dataSource.getConnection();
-            var prepareStatement = connection.prepareStatement(SAVE_URL)
-            ) {
+                var connection = dataSource.getConnection();
+                var prepareStatement = connection.prepareStatement(SqlRequests.SAVE_URL)
+        ) {
             prepareStatement.setString(1, name);
             prepareStatement.setTimestamp(2, getCurrentDateTime());
             prepareStatement.executeUpdate();
@@ -77,8 +51,8 @@ public class UrlRepository extends BaseRepository {
 
     public static Optional<Url> readUrlById(int id) throws SQLException {
         try (
-            var connection = dataSource.getConnection();
-            var prepareStatement = connection.prepareStatement(READ_URL_BY_ID)
+                var connection = dataSource.getConnection();
+                var prepareStatement = connection.prepareStatement(SqlRequests.READ_URL_BY_ID)
         ) {
             prepareStatement.setInt(1, id);
             try (var resultSet = prepareStatement.executeQuery()) {
@@ -89,8 +63,8 @@ public class UrlRepository extends BaseRepository {
 
     public static Optional<Url> readUrlByName(String name) throws SQLException {
         try (
-            var connection = dataSource.getConnection();
-            var prepareStatement = connection.prepareStatement(READ_URL_BY_NAME)
+                var connection = dataSource.getConnection();
+                var prepareStatement = connection.prepareStatement(SqlRequests.READ_URL_BY_NAME)
         ) {
             prepareStatement.setString(1, name);
             try (var resultSet = prepareStatement.executeQuery()) {
@@ -113,8 +87,8 @@ public class UrlRepository extends BaseRepository {
     public static void saveUrlCheck(int urlId, int statusCode, String h1,
                                     String title, String description) throws SQLException {
         try (
-            var connection = dataSource.getConnection();
-            var prepareStatement = connection.prepareStatement(SAVE_URL_CHECK)
+                var connection = dataSource.getConnection();
+                var prepareStatement = connection.prepareStatement(SqlRequests.SAVE_URL_CHECK)
         ) {
             prepareStatement.setInt(1, urlId);
             prepareStatement.setInt(2, statusCode);
@@ -128,8 +102,8 @@ public class UrlRepository extends BaseRepository {
 
     public static List<UrlCheck> readUrlChecks(int urlId) throws SQLException {
         try (
-            var connection = dataSource.getConnection();
-            var prepareStatement = connection.prepareStatement(READ_URL_CHECKS)
+                var connection = dataSource.getConnection();
+                var prepareStatement = connection.prepareStatement(SqlRequests.READ_URL_CHECKS)
         ) {
             prepareStatement.setInt(1, urlId);
             try (var resultSet = prepareStatement.executeQuery()) {
@@ -144,9 +118,9 @@ public class UrlRepository extends BaseRepository {
 
     public static Map<Url, UrlCheck> readUrlsWithLatestChecks() throws SQLException {
         try (
-            var connection = dataSource.getConnection();
-            var preparedStatement = connection.prepareStatement(READ_URLS_WITH_LATEST_CHECKS);
-            var resultSet = preparedStatement.executeQuery()
+                var connection = dataSource.getConnection();
+                var preparedStatement = connection.prepareStatement(SqlRequests.READ_URLS_WITH_LATEST_CHECKS);
+                var resultSet = preparedStatement.executeQuery()
         ) {
             var result = new HashMap<Url, UrlCheck>();
             while (resultSet.next()) {
@@ -156,6 +130,18 @@ public class UrlRepository extends BaseRepository {
             }
             return result;
         }
+    }
+
+    static Timestamp getCurrentDateTime() {
+        return Timestamp.valueOf(LocalDateTime.now());
+    }
+
+    static String createdAtToString(Timestamp createdAt) {
+        var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return Optional.ofNullable(createdAt)
+                .map(Timestamp::toLocalDateTime)
+                .map(formatter::format)
+                .orElse(null);
     }
 
 }

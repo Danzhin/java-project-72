@@ -1,6 +1,6 @@
 @import hexlet.code.utils.Routes
 @param gg.jte.Content content
-@param hexlet.code.pages.BasePage page = null
+@param hexlet.code.models.pages.BasePage page = null
 
 <!doctype html>
 <html lang="en">

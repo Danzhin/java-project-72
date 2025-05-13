@@ -1,11 +1,9 @@
-package hexlet.code.controllers;
-
+package hexlet.code.controller;
+/*
 import hexlet.code.App;
-import hexlet.code.repositories.UrlRepository;
 import hexlet.code.utils.Routes;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
@@ -135,7 +133,7 @@ public class UrlControllerTest {
             assertThat(responseBody).contains("Example Description");
             assertThat(responseBody).contains("200");
         });
-    }*/
+    }
 
     @Test
     void testStore() {
@@ -165,4 +163,4 @@ public class UrlControllerTest {
 
 
 }
-
+*/

@@ -4,7 +4,7 @@ import hexlet.code.utils.Routes;
 public final class JteindexGenerated {
 	public static final String JTE_NAME = "index.jte";
 	public static final int[] JTE_LINE_INFO = {0,0,1,1,1,1,3,3,6,6,12,12,12,12,12,12,12,12,12,30,30,30,30,30,1,1,1,1};
-	public static void render(gg.jte.html.HtmlTemplateOutput jteOutput, gg.jte.html.HtmlInterceptor jteHtmlInterceptor, hexlet.code.pages.BasePage page) {
+	public static void render(gg.jte.html.HtmlTemplateOutput jteOutput, gg.jte.html.HtmlInterceptor jteHtmlInterceptor, hexlet.code.models.pages.BasePage page) {
 		jteOutput.writeContent("\r\n");
 		gg.jte.generated.ondemand.layout.JtepageGenerated.render(jteOutput, jteHtmlInterceptor, new gg.jte.html.HtmlContent() {
 			public void writeTo(gg.jte.html.HtmlTemplateOutput jteOutput) {
@@ -22,7 +22,7 @@ public final class JteindexGenerated {
 		}, page);
 	}
 	public static void renderMap(gg.jte.html.HtmlTemplateOutput jteOutput, gg.jte.html.HtmlInterceptor jteHtmlInterceptor, java.util.Map<String, Object> params) {
-		hexlet.code.pages.BasePage page = (hexlet.code.pages.BasePage)params.get("page");
+		hexlet.code.models.pages.BasePage page = (hexlet.code.models.pages.BasePage)params.get("page");
 		render(jteOutput, jteHtmlInterceptor, page);
 	}
 }

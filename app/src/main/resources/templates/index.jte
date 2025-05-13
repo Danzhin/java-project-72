@@ -1,5 +1,5 @@
 @import hexlet.code.utils.Routes
-@param hexlet.code.pages.BasePage page
+@param hexlet.code.models.pages.BasePage page
 
 @template.layout.page(
     page = page,
