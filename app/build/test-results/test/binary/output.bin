@@ -1,0 +1,48 @@
+a14:49:43.677 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+Š14:49:43.913 [Test worker] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:project user=
+f14:49:43.917 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+e14:49:44.055 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/]
+i14:49:44.057 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls]
+n14:49:44.058 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls/{id}]
+j14:49:44.059 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls]
+v14:49:44.059 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls/{id}/checks]
+a14:49:45.121 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+‹14:49:45.122 [Test worker] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:project user=
+f14:49:45.122 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+e14:49:45.127 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/]
+i14:49:45.127 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls]
+n14:49:45.127 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls/{id}]
+j14:49:45.127 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls]
+v14:49:45.127 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls/{id}/checks]
+a14:49:46.129 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+‹14:49:46.129 [Test worker] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection conn20: url=jdbc:h2:mem:project user=
+f14:49:46.130 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+e14:49:46.133 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/]
+i14:49:46.133 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls]
+n14:49:46.133 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls/{id}]
+j14:49:46.133 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls]
+v14:49:46.134 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls/{id}/checks]
+a14:49:46.239 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Starting...
+‹14:49:46.240 [Test worker] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-4 - Added connection conn22: url=jdbc:h2:mem:project user=
+f14:49:46.240 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Start completed.
+e14:49:46.243 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/]
+i14:49:46.243 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls]
+n14:49:46.243 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls/{id}]
+j14:49:46.243 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls]
+v14:49:46.243 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls/{id}/checks]
+a14:49:46.335 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Starting...
+‹14:49:46.336 [Test worker] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-5 - Added connection conn26: url=jdbc:h2:mem:project user=
+f14:49:46.336 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Start completed.
+e14:49:46.339 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/]
+i14:49:46.340 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls]
+n14:49:46.340 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls/{id}]
+j14:49:46.340 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls]
+v14:49:46.340 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls/{id}/checks]
+a14:49:46.433 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Starting...
+‹14:49:46.434 [Test worker] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-6 - Added connection conn33: url=jdbc:h2:mem:project user=
+f14:49:46.434 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Start completed.
+e14:49:46.437 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/]
+i14:49:46.438 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls]
+n14:49:46.438 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: GET[/urls/{id}]
+j14:49:46.438 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls]
+v14:49:46.438 [Test worker] INFO  io.javalin.Javalin - JAVALIN HANDLER REGISTRATION DEBUG LOG: POST[/urls/{id}/checks]

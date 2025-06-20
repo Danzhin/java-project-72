@@ -1,18 +1,16 @@
 package hexlet.code.controller;
-/*
+
 import hexlet.code.App;
+import hexlet.code.repository.UrlCheckRepository;
+import hexlet.code.repository.UrlRepository;
 import hexlet.code.utils.Routes;
+
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
-import okhttp3.mockwebserver.MockWebServer;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -20,29 +18,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class UrlControllerTest {
 
-    private static MockWebServer mockServer;
     private Javalin app;
 
-    @BeforeAll
-    public static void beforeAll() throws IOException {
-        mockServer = new MockWebServer();
-        mockServer.start();
-    }
-
-    @AfterAll
-    public static void afterAll() throws IOException {
-        mockServer.shutdown();
-    }
-
     @BeforeEach
-    public final void setUp() throws SQLException, IOException {
+    public final void setUp() throws SQLException {
         app = App.getApp();
-        UrlRepository.saveUrl("https://www.example.com");
-        UrlRepository.saveUrlCheck(1, 200, "h1", "title", "description");
+        UrlRepository.save("https://www.example.com");
+        UrlCheckRepository.save(1, 200, "h1", "title", "description");
     }
 
     @Test
-    public void readSearchFormTest() {
+    public void indexTest() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(Routes.ROOT_PATH);
             var responseBody = Objects.requireNonNull(response.body()).string();
@@ -52,7 +38,7 @@ public class UrlControllerTest {
     }
 
     @Test
-    public void readUrlsTest() {
+    public void readAllTest() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(Routes.URLS_PATH);
             var responseBody = Objects.requireNonNull(response.body()).string();
@@ -63,7 +49,7 @@ public class UrlControllerTest {
     }
 
     @Test
-    public void readUrlTest() {
+    public void readByIdTest() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(Routes.urlPath(1));
             var responseBody = Objects.requireNonNull(response.body()).string();
@@ -77,7 +63,7 @@ public class UrlControllerTest {
     }
 
     @Test
-    public void createUrlTest() {
+    public void createTest() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "name=https://www.example.com";
             var response = client.post(Routes.URLS_PATH, requestBody);
@@ -86,81 +72,5 @@ public class UrlControllerTest {
         });
     }
 
-    @Test
-    public void createUrlCheckTest() {
-        JavalinTest.test(app, (server, client) -> {
-            var requestBody = "urlId=1&statusCode=200&h1=h1&title=title&description=description";
-            var response = client.post(Routes.urlCheckPath(1), requestBody);
-            var responseBody = Objects.requireNonNull(response.body()).string();
-            assertThat(response.code()).isEqualTo(200);
-            assertThat(responseBody).contains("1");
-            assertThat(responseBody).contains("200");
-            assertThat(responseBody).contains("h1");
-            assertThat(responseBody).contains("title");
-            assertThat(responseBody).contains("description");
-        });
-    }
-
-    /*@Test
-    public void createUrlCheckRealRequestTest() throws SQLException {
-        var html = """
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <title>Example Title</title>
-                <meta name="description" content="Example Description">
-              </head>
-              <body>
-                <h1>Example H1</h1>
-              </body>
-            </html>
-            """;
-
-        var mockResponse = new MockResponse().setResponseCode(200).setBody(html);
-        mockServer.enqueue(mockResponse);
-
-        var mockUrl = mockServer.url("/").toString();
-        UrlRepository.saveUrl(mockUrl);
-
-        JavalinTest.test(app, (server, client) -> {
-            var urlId = 2;
-            var response = client.post(Routes.urlCheckPath(urlId));
-            var responseBody = Objects.requireNonNull(response.body()).string();
-
-            assertThat(response.code()).isEqualTo(200);
-            assertThat(responseBody).contains("Example H1");
-            assertThat(responseBody).contains("Example Title");
-            assertThat(responseBody).contains("Example Description");
-            assertThat(responseBody).contains("200");
-        });
-    }
-
-    @Test
-    void testStore() {
-        String url = mockServer.url("/").toString().replaceAll("/$", "");
-
-        JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=" + url;
-            Assertions.assertThat(client.post("/urls", requestBody).code()).isEqualTo(200);
-
-            var actualUrl = UrlRepository.readUrlByName(url);
-            assertThat(actualUrl).isNotNull();
-            System.out.println("\n!!!!!");
-            System.out.println(actualUrl);
-
-            System.out.println("\n");
-            assertThat(actualUrl.get().getName()).isEqualTo(url);
-
-            client.post("/urls/" + actualUrl.get().getId() + "/checks");
-
-            System.out.println(actualUrl);
-            Assertions.assertThat(client.get("/urls/" + actualUrl.get().getId()).code())
-                    .isEqualTo(200);
-
-
-        });
-    }
-
-
 }
-*/
+
