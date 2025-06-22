@@ -1,6 +1,7 @@
 plugins {
     application
     checkstyle
+    jacoco
     id("org.sonarqube") version "6.2.0.5505"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.freefair.lombok") version "8.6"
@@ -50,6 +51,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
 }
 
 sonar {
