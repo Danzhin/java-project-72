@@ -1,6 +1,7 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/Danzhin/java-project-72/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/Danzhin/java-project-72/actions)
-[![Maintainability](https://qlty.sh/badges/b541a6f6-7c6a-4b54-af24-91c30c402547/maintainability.svg)](https://qlty.sh/gh/Danzhin/projects/java-project-72)
-[![Code Coverage](https://qlty.sh/badges/b541a6f6-7c6a-4b54-af24-91c30c402547/test_coverage.svg)](https://qlty.sh/gh/Danzhin/projects/java-project-72)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Danzhin_java-project-72&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Danzhin_java-project-72)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Danzhin_java-project-72&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Danzhin_java-project-72)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Danzhin_java-project-72&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Danzhin_java-project-72)
 ### Описание
 Анализатор страниц – сайт, который анализирует указанные страницы на SEO пригодность.
