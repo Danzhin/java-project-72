@@ -19,6 +19,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Execute Gradle build
+        working-directory: app
         run: ./gradlew build
       - name: Generate coverage report
         working-directory: app
