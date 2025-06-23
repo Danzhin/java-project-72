@@ -1,5 +1,6 @@
 package hexlet.code.controller;
 
+import hexlet.code.utils.FlashAttributes;
 import hexlet.code.exception.UrlValidationError;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
@@ -27,7 +28,7 @@ public class UrlsController {
     private static final UrlValidator VALIDATOR = new UrlValidator();
 
     public static void index(Context ctx) {
-        var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-danger");
+        var flash = new Flash(ctx.consumeSessionAttribute(FlashAttributes.FLASH), FlashAttributes.ALERT_TYPE_DANGER);
         var page = new BasePage();
         page.setFlash(flash);
         ctx.render("index.jte", model("page", page));
@@ -37,13 +38,13 @@ public class UrlsController {
         try {
             var name = prepareName(ctx.formParam("url"));
             UrlRepository.save(name);
-            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute(FlashAttributes.FLASH, FlashAttributes.CREATE_URL_SUCCESS_MASSAGE);
             ctx.redirect(Routes.URLS_PATH);
         } catch (UrlValidationError e) {
-            ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute(FlashAttributes.FLASH, FlashAttributes.INCORRECT_URL_MASSAGE);
             ctx.redirect(Routes.ROOT_PATH);
         } catch (SQLException e) {
-            ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute(FlashAttributes.FLASH, FlashAttributes.URL_ALREADY_EXISTS_MASSAGE);
             ctx.redirect(Routes.ROOT_PATH);
         }
     }
@@ -51,7 +52,7 @@ public class UrlsController {
     public static void readAll(Context ctx) throws SQLException {
         var urls = UrlRepository.readWithLatestChecks();
         var page = new UrlsPage(urls);
-        var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
+        var flash = new Flash(ctx.consumeSessionAttribute(FlashAttributes.FLASH), FlashAttributes.ALERT_TYPE_SUCCESS);
         page.setFlash(flash);
         ctx.render("urls/index.jte", model("page", page));
     }
@@ -61,7 +62,7 @@ public class UrlsController {
         var url = UrlRepository.readById(id).orElseThrow(NotFoundResponse::new);
         var checks = UrlCheckRepository.readAll(id);
         var page = new UrlPage(url, checks);
-        var flash = new Flash(ctx.consumeSessionAttribute("flash"), "alert-success");
+        var flash = new Flash(ctx.consumeSessionAttribute(FlashAttributes.FLASH), FlashAttributes.ALERT_TYPE_SUCCESS);
         page.setFlash(flash);
         ctx.render("urls/show.jte", model("page", page));
     }

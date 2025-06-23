@@ -1,5 +1,6 @@
 package hexlet.code.controller;
 
+import hexlet.code.utils.FlashAttributes;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.utils.Routes;
@@ -33,7 +34,7 @@ public class UrlChecksController {
                 .orElse(null);
 
         UrlCheckRepository.save(urlId, statusCode, h1, title, description);
-        ctx.sessionAttribute("flash", "Страница успешно проверена");
+        ctx.sessionAttribute(FlashAttributes.FLASH, FlashAttributes.CHECK_URL_SUCCESS_MASSAGE);
         ctx.redirect(Routes.urlPath(urlId));
     }
 
