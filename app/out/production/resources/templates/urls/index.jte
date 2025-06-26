@@ -1,5 +1,4 @@
 @import hexlet.code.utils.Routes
-@import static hexlet.code.utils.DateTimeUtils.localDateTimeToString
 @param hexlet.code.page.UrlsPage page
 
 @template.layout.page(
@@ -21,7 +20,7 @@
                     <tr>
                         <td>${entry.getKey().getId()}</td>
                         <td><a href="${Routes.urlPath(entry.getKey().getId())}">${entry.getKey().getName()}</a></td>
-                        <td>${localDateTimeToString(entry.getValue().getCreatedAt())}</td>
+                        <td>${entry.getValue().getCreatedAt()}</td>
                         <td>${entry.getValue().getStatusCode()}</td>
                     </tr>
                 @endfor

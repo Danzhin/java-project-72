@@ -1,4 +1,4 @@
-package hexlet.code.model.page.flash;
+package hexlet.code.page.flash;
 
 import lombok.Getter;
 import lombok.AllArgsConstructor;

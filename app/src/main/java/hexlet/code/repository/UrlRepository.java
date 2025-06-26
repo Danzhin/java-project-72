@@ -7,14 +7,38 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Optional;
 
-import hexlet.code.model.entity.Url;
-import hexlet.code.model.entity.UrlCheck;
+import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 
 public class UrlRepository extends BaseRepository {
 
-    private static final String SQL_SAVE = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
-    private static final String SQL_READ_BY_ID = "SELECT * FROM urls WHERE id = ?";
-    private static final String SQL_READ_WITH_LATEST_CHECKS = """
+    public static void save(String name) throws SQLException {
+        var sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+        try (
+                var connection = getConnection();
+                var preparedStatement = connection.prepareStatement(sql)
+        ) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public static Optional<Url> readById(int id) throws SQLException {
+        var sql = "SELECT * FROM urls WHERE id = ?";
+        try (
+                var connection = getConnection();
+                var preparedStatement = connection.prepareStatement(sql)
+        ) {
+            preparedStatement.setInt(1, id);
+            try (var resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next() ? Optional.of(new Url(resultSet)) : Optional.empty();
+            }
+        }
+    }
+
+    public static Map<Url, UrlCheck> readWithLatestChecks() throws SQLException {
+        var sql = """
             SELECT
             urls.id, urls.name,
             url_checks.*
@@ -29,34 +53,9 @@ public class UrlRepository extends BaseRepository {
             ) AS url_checks
             ON urls.id = url_checks.url_id AND url_checks.rn = 1;
             """;
-
-    public static void save(String name) throws SQLException {
         try (
-                var connection = dataSource.getConnection();
-                var preparedStatement = connection.prepareStatement(SQL_SAVE)
-        ) {
-            preparedStatement.setString(1, name);
-            preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            preparedStatement.executeUpdate();
-        }
-    }
-
-    public static Optional<Url> readById(int id) throws SQLException {
-        try (
-                var connection = dataSource.getConnection();
-                var preparedStatement = connection.prepareStatement(SQL_READ_BY_ID)
-        ) {
-            preparedStatement.setInt(1, id);
-            try (var resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next() ? Optional.of(new Url(resultSet)) : Optional.empty();
-            }
-        }
-    }
-
-    public static Map<Url, UrlCheck> readWithLatestChecks() throws SQLException {
-        try (
-                var connection = dataSource.getConnection();
-                var preparedStatement = connection.prepareStatement(SQL_READ_WITH_LATEST_CHECKS);
+                var connection = getConnection();
+                var preparedStatement = connection.prepareStatement(sql);
                 var resultSet = preparedStatement.executeQuery()
         ) {
             var result = new HashMap<Url, UrlCheck>();

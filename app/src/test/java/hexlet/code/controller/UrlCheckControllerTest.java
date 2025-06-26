@@ -38,7 +38,7 @@ public class UrlCheckControllerTest {
     }
 
     @BeforeEach
-    public final void setUp() throws SQLException {
+    public final void setUp() throws SQLException, IOException {
         app = App.getApp();
     }
 

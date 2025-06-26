@@ -1,20 +1,22 @@
-package hexlet.code.model.entity;
+package hexlet.code.model;
 
-import hexlet.code.utils.TimestampFormatter;
 import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+
+import static hexlet.code.utils.DateTimeUtils.timestampToLocalDateTime;
 
 @Getter
 public class UrlCheck {
-    private Integer id;
-    private int urlId;
-    private int statusCode;
-    private String title;
-    private String h1;
-    private String description;
-    private String createdAt;
+    private final Integer id;
+    private final int urlId;
+    private final int statusCode;
+    private final String title;
+    private final String h1;
+    private final String description;
+    private final LocalDateTime createdAt;
 
     public UrlCheck(ResultSet resultSet) throws SQLException {
         this.id = resultSet.getInt("id");
@@ -23,6 +25,6 @@ public class UrlCheck {
         this.h1 = resultSet.getString("h1");
         this.title = resultSet.getString("title");
         this.description = resultSet.getString("description");
-        this.createdAt = TimestampFormatter.toString(resultSet.getTimestamp("created_at"));
+        this.createdAt = timestampToLocalDateTime(resultSet.getTimestamp("created_at"));
     }
 }

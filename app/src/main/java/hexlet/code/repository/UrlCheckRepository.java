@@ -1,6 +1,6 @@
 package hexlet.code.repository;
 
-import hexlet.code.model.entity.UrlCheck;
+import hexlet.code.model.UrlCheck;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -10,17 +10,15 @@ import java.util.List;
 
 public class UrlCheckRepository extends BaseRepository {
 
-    private static final String SQL_SAVE = """
+    public static void save(int urlId, int statusCode, String h1,
+                            String title, String description) throws SQLException {
+        var sql = """
             INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
             """;
-    private static final String SQL_READ_ALL = "SELECT * FROM url_checks WHERE url_id = ?";
-
-    public static void save(int urlId, int statusCode, String h1,
-                            String title, String description) throws SQLException {
         try (
-                var connection = dataSource.getConnection();
-                var preparedStatement = connection.prepareStatement(SQL_SAVE)
+                var connection = getConnection();
+                var preparedStatement = connection.prepareStatement(sql)
         ) {
             preparedStatement.setInt(1, urlId);
             preparedStatement.setInt(2, statusCode);
@@ -33,9 +31,10 @@ public class UrlCheckRepository extends BaseRepository {
     }
 
     public static List<UrlCheck> readAll(int urlId) throws SQLException {
+        var sql = "SELECT * FROM url_checks WHERE url_id = ?";
         try (
-                var connection = dataSource.getConnection();
-                var preparedStatement = connection.prepareStatement(SQL_READ_ALL)
+                var connection = getConnection();
+                var preparedStatement = connection.prepareStatement(sql)
         ) {
             preparedStatement.setInt(1, urlId);
             try (var resultSet = preparedStatement.executeQuery()) {

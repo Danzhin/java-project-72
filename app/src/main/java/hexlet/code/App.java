@@ -1,6 +1,11 @@
 package hexlet.code;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.stream.Collectors;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -22,14 +27,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class App {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
         var app = getApp();
         var port = getPort();
         app.start(port);
     }
 
-    public static Javalin getApp() throws SQLException {
-        BaseRepository.dataSource = initDataSource();
+    public static Javalin getApp() throws SQLException, IOException {
+        var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(jdbcUrl);
+        BaseRepository.dataSource = new HikariDataSource(hikariConfig);
+
+        var sql = readResourceFile("schema.sql");
+        try (var connection = BaseRepository.getConnection();
+             var statement = connection.createStatement()
+        ) {
+            statement.execute(sql);
+        }
 
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
@@ -58,38 +73,11 @@ public class App {
         return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
-    private static HikariDataSource initDataSource() throws SQLException {
-        var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
-        var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(jdbcUrl);
-        HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-        try (var connection = dataSource.getConnection();
-             var statement = connection.createStatement()
-        ) {
-            statement.execute(SQL_INIT_DATA_SOURCE);
+    private static String readResourceFile(String fileName) throws IOException {
+        var inputStream = App.class.getClassLoader().getResourceAsStream(fileName);
+        try (var reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            return reader.lines().collect(Collectors.joining("\n"));
         }
-        return dataSource;
     }
-
-    private static final String SQL_INIT_DATA_SOURCE = """
-            DROP TABLE IF EXISTS urls CASCADE;
-            DROP TABLE IF EXISTS url_checks;
-
-            CREATE TABLE urls (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(255) UNIQUE,
-                created_at TIMESTAMP
-            );
-
-            CREATE TABLE url_checks (
-                id SERIAL PRIMARY KEY,
-                url_id INTEGER REFERENCES urls(id),
-                status_code INTEGER,
-                h1 VARCHAR(255),
-                title VARCHAR(255),
-                description TEXT,
-                created_at TIMESTAMP
-            );
-            """;
 
 }

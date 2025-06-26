@@ -1,9 +1,9 @@
-package hexlet.code.model.page;
+package hexlet.code.page;
 
 import java.util.List;
 
-import hexlet.code.model.entity.Url;
-import hexlet.code.model.entity.UrlCheck;
+import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

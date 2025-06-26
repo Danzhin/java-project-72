@@ -1,6 +1,6 @@
-package hexlet.code.model.page;
+package hexlet.code.page;
 
-import hexlet.code.model.page.flash.Flash;
+import hexlet.code.page.flash.Flash;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

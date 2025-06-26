@@ -11,6 +11,7 @@ import io.javalin.testtools.JavalinTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class UrlControllerTest {
     private Javalin app;
 
     @BeforeEach
-    public final void setUp() throws SQLException {
+    public final void setUp() throws SQLException, IOException {
         app = App.getApp();
     }
 

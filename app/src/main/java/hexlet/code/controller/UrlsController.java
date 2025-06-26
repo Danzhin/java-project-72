@@ -1,20 +1,19 @@
 package hexlet.code.controller;
 
 import hexlet.code.utils.FlashAttributes;
-import hexlet.code.exception.UrlValidationError;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.utils.Routes;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.Objects;
 
-import hexlet.code.model.page.BasePage;
-import hexlet.code.model.page.UrlPage;
-import hexlet.code.model.page.UrlsPage;
-import hexlet.code.model.page.flash.Flash;
+import hexlet.code.page.BasePage;
+import hexlet.code.page.UrlPage;
+import hexlet.code.page.UrlsPage;
+import hexlet.code.page.flash.Flash;
 
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
@@ -25,7 +24,7 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlsController {
 
-    private static final UrlValidator VALIDATOR = new UrlValidator();
+    private static final UrlValidator VALIDATOR = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
 
     public static void index(Context ctx) {
         var flash = new Flash(ctx.consumeSessionAttribute(FlashAttributes.FLASH), FlashAttributes.ALERT_TYPE_DANGER);
@@ -35,18 +34,29 @@ public class UrlsController {
     }
 
     public static void create(Context ctx) {
+        var name = ctx.formParam("url");
+        URI uri;
         try {
-            var name = prepareName(ctx.formParam("url"));
-            UrlRepository.save(name);
-            ctx.sessionAttribute(FlashAttributes.FLASH, FlashAttributes.CREATE_URL_SUCCESS_MASSAGE);
-            ctx.redirect(Routes.URLS_PATH);
-        } catch (UrlValidationError e) {
+            uri = new URI(Objects.requireNonNull(name));
+            if (!VALIDATOR.isValid(name)) {
+                throw new URISyntaxException(name, "");
+            }
+        } catch (URISyntaxException e) {
             ctx.sessionAttribute(FlashAttributes.FLASH, FlashAttributes.INCORRECT_URL_MASSAGE);
             ctx.redirect(Routes.ROOT_PATH);
+            return;
+        }
+
+        name = prepareName(uri);
+        try {
+            UrlRepository.save(name);
         } catch (SQLException e) {
             ctx.sessionAttribute(FlashAttributes.FLASH, FlashAttributes.URL_ALREADY_EXISTS_MASSAGE);
             ctx.redirect(Routes.ROOT_PATH);
+            return;
         }
+        ctx.sessionAttribute(FlashAttributes.FLASH, FlashAttributes.CREATE_URL_SUCCESS_MASSAGE);
+        ctx.redirect(Routes.URLS_PATH);
     }
 
     public static void readAll(Context ctx) throws SQLException {
@@ -67,20 +77,11 @@ public class UrlsController {
         ctx.render("urls/show.jte", model("page", page));
     }
 
-    private static String prepareName(String name) throws UrlValidationError {
-        if (!VALIDATOR.isValid(name)) {
-            throw new UrlValidationError("");
-        }
-        try {
-            var uri = new URI(name);
-            var url = uri.toURL();
-            var protocol = url.getProtocol() + "://";
-            var host = url.getHost();
-            var port = url.getPort() == -1 ? "" : ":" + url.getPort();
-            return protocol + host + port;
-        } catch (URISyntaxException | MalformedURLException e) {
-            throw new UrlValidationError("");
-        }
+    private static String prepareName(URI uri) {
+        var scheme = uri.getScheme();
+        var host = uri.getHost();
+        var port = uri.getPort() == -1 ? "" : ":" + uri.getPort();
+        return String.format("%s://%s%s", scheme, host, port).toLowerCase();
     }
 
 }

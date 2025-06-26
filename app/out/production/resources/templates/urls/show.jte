@@ -1,5 +1,4 @@
 @import hexlet.code.utils.Routes
-@import static hexlet.code.utils.DateTimeUtils.localDateTimeToString
 @param hexlet.code.page.UrlPage page
 
 @template.layout.page(
@@ -20,7 +19,7 @@
                     </tr>
                     <tr>
                         <td>Дата создания</td>
-                        <td>${localDateTimeToString(page.getUrl().getCreatedAt())}</td>
+                        <td>${page.getUrl().getCreatedAt()}</td>
                     </tr>
                 </tbody>
             </table>
@@ -47,7 +46,7 @@
                         <td>${urlCheck.getTitle()}</td>
                         <td>${urlCheck.getH1()}</td>
                         <td>${urlCheck.getDescription()}</td>
-                        <td>${localDateTimeToString(urlCheck.getCreatedAt())}</td>
+                        <td>${urlCheck.getCreatedAt()}</td>
                     </tr>
                 @endfor
                 </tbody>
