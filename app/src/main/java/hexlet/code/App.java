@@ -33,6 +33,11 @@ public class App {
         app.start(port);
     }
 
+    private static int getPort() {
+        String port = System.getenv().getOrDefault("DB_PORT", "7070");
+        return Integer.parseInt(port);
+    }
+
     public static Javalin getApp() throws SQLException, IOException {
         var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
         var hikariConfig = new HikariConfig();
@@ -60,11 +65,6 @@ public class App {
         app.post(Routes.URLS_CHECKS_PATH, UrlChecksController::create);
 
         return app;
-    }
-
-    private static int getPort() {
-        String port = System.getenv().getOrDefault("DB_PORT", "7070");
-        return Integer.parseInt(port);
     }
 
     private static TemplateEngine createTemplateEngine() {
