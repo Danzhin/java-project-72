@@ -7,7 +7,6 @@ import hexlet.code.utils.Routes;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Objects;
 
 import hexlet.code.page.BasePage;
@@ -33,7 +32,7 @@ public class UrlsController {
         ctx.render("index.jte", model("page", page));
     }
 
-    public static void create(Context ctx) throws SQLException {
+    public static void create(Context ctx) {
         var name = ctx.formParam("url");
         URI uri;
         try {
@@ -51,8 +50,8 @@ public class UrlsController {
         var port = uri.getPort() == -1 ? "" : ":" + uri.getPort();
         var preparedName = String.format("%s://%s%s", scheme, host, port).toLowerCase();
         try {
-            UrlRepository.save(String.format(preparedName));
-        } catch (SQLIntegrityConstraintViolationException e) {
+            UrlRepository.save(preparedName);
+        } catch (SQLException e) {
             ctx.sessionAttribute(ControllerUtils.FLASH, ControllerUtils.URL_ALREADY_EXISTS_MASSAGE);
             ctx.redirect(Routes.ROOT_PATH);
             return;
