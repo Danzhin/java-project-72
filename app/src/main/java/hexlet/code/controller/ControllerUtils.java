@@ -10,9 +10,9 @@ public class ControllerUtils {
 
     public static final String INCORRECT_URL_MASSAGE = "Некорректный URL";
 
-    public static final String CHECK_URL_SUCCESS_MASSAGE = "Страница успешно проверена";
+    public static final String URL_CHECK_SUCCESS_MASSAGE = "Страница успешно проверена";
 
-    public static final String CHECK_URL_ERROR_MASSAGE = "Ошибка при проверке сайта";
+    public static final String URL_CHECK_ERROR_MASSAGE = "Ошибка при проверке сайта";
 
     public static final String ALERT_TYPE_DANGER = "alert-danger";
 

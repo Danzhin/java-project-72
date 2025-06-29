@@ -30,10 +30,10 @@ public class UrlChecksController {
             var description = Optional.ofNullable(document.selectFirst("meta[name=description]"))
                     .map(el -> el.attr("content")).orElse(null);
             UrlCheckRepository.save(urlId, statusCode, h1, title, description);
-            ctx.sessionAttribute(ControllerUtils.FLASH, ControllerUtils.CHECK_URL_SUCCESS_MASSAGE);
+            ctx.sessionAttribute(ControllerUtils.FLASH, ControllerUtils.URL_CHECK_SUCCESS_MASSAGE);
             ctx.redirect(Routes.urlPath(urlId));
         } catch (UnirestException | NullPointerException e) {
-            ctx.sessionAttribute(ControllerUtils.FLASH, ControllerUtils.CHECK_URL_ERROR_MASSAGE);
+            ctx.sessionAttribute(ControllerUtils.FLASH, ControllerUtils.URL_CHECK_ERROR_MASSAGE);
             ctx.redirect(Routes.urlPath(urlId));
         }
     }
