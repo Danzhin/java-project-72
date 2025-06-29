@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -30,7 +29,7 @@ public class UrlControllerTest {
     public void indexTest() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(Routes.ROOT_PATH);
-            var responseBody = Objects.requireNonNull(response.body()).string();
+            var responseBody = response.body().string();
             assertThat(response.code()).isEqualTo(200);
             assertThat(responseBody).contains("Анализатор страниц");
         });
@@ -39,12 +38,12 @@ public class UrlControllerTest {
     @Test
     public void readAllTest() {
         JavalinTest.test(app, (server, client) -> {
-            var urlId = UrlRepository.save("https://www.example.com");
+            var urlId = UrlRepository.save(TestUtils.TEST_URL);
             UrlCheckRepository.save(urlId, 200, "h1", "title", "description");
             var response = client.get(Routes.URLS_PATH);
-            var responseBody = Objects.requireNonNull(response.body()).string();
+            var responseBody = response.body().string();
             assertThat(response.code()).isEqualTo(200);
-            assertThat(responseBody).contains("https://www.example.com");
+            assertThat(responseBody).contains(TestUtils.TEST_URL);
             assertThat(responseBody).contains("200");
         });
     }
@@ -52,12 +51,12 @@ public class UrlControllerTest {
     @Test
     public void readByIdTest() {
         JavalinTest.test(app, (server, client) -> {
-            var urlId = UrlRepository.save("https://www.example.com");
+            var urlId = UrlRepository.save(TestUtils.TEST_URL);
             UrlCheckRepository.save(urlId, 200, "h1", "title", "description");
             var response = client.get(Routes.urlPath(urlId));
-            var responseBody = Objects.requireNonNull(response.body()).string();
+            var responseBody = response.body().string();
             assertThat(response.code()).isEqualTo(200);
-            assertThat(responseBody).contains("https://www.example.com");
+            assertThat(responseBody).contains(TestUtils.TEST_URL);
             assertThat(responseBody).contains("200");
             assertThat(responseBody).contains("h1");
             assertThat(responseBody).contains("title");
@@ -68,11 +67,13 @@ public class UrlControllerTest {
     @Test
     public void createTest() {
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "url=https://www.example.comm";
-            var response = client.post(Routes.URLS_PATH, requestBody);
-            var responseBody = Objects.requireNonNull(response.body()).string();
-            assertThat(response.code()).isEqualTo(200);
-            assertThat(responseBody).contains("https://www.example.com");
+            var requestBody = "url=" + TestUtils.TEST_URL;
+            var postResponse = client.post(Routes.URLS_PATH, requestBody);
+            assertThat(postResponse.code()).isEqualTo(200);
+
+            var getResponse = client.get(Routes.URLS_PATH);
+            assertThat(getResponse.code()).isEqualTo(200);
+            assertThat(getResponse.body().string()).contains(TestUtils.TEST_URL);
         });
     }
 

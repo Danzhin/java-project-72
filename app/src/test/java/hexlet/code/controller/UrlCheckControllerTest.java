@@ -1,6 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.App;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.utils.Routes;
 
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Objects;
 
 import static hexlet.code.controller.TestUtils.readFixture;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -45,12 +45,15 @@ public class UrlCheckControllerTest {
 
     @Test
     public void createTest() throws SQLException {
-        var urlId = UrlRepository.save("https://example.com");
+        var urlId = UrlRepository.save(TestUtils.TEST_URL);
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "urlId=1&statusCode=200&h1=h1&title=title&description=description";
-            var response = client.post(Routes.urlCheckPath(urlId), requestBody);
-            var responseBody = Objects.requireNonNull(response.body()).string();
-            assertThat(response.code()).isEqualTo(200);
+            var postResponse = client.post(Routes.urlCheckPath(urlId), requestBody);
+            assertThat(postResponse.code()).isEqualTo(200);
+
+            var getResponse = client.get(Routes.urlPath(urlId));
+            var responseBody = getResponse.body().string();
+            assertThat(getResponse.code()).isEqualTo(200);
             assertThat(responseBody).contains("1");
             assertThat(responseBody).contains("200");
             assertThat(responseBody).contains("h1");
@@ -61,20 +64,28 @@ public class UrlCheckControllerTest {
 
     @Test
     public void mockServerTest() throws SQLException, IOException {
+        var testUrl = mockServer.url("/").toString();
+        var urlId = UrlRepository.save(testUrl);
+
         var html = readFixture("index.html");
         MockResponse response = new MockResponse().setBody(html).setResponseCode(200);
         mockServer.enqueue(response);
 
-        String fakeUrl = mockServer.url("/").toString();
-        UrlRepository.save(fakeUrl);
-
         JavalinTest.test(app, (server, client) -> {
-            var checkResponse = client.post(Routes.urlCheckPath(1));
-            var body = Objects.requireNonNull(checkResponse.body()).string();
-            assertThat(checkResponse.code()).isEqualTo(200);
+            var postResponse = client.post(Routes.urlCheckPath(urlId));
+            assertThat(postResponse.code()).isEqualTo(200);
+
+            var getResponse = client.get(Routes.urlPath(urlId));
+            assertThat(getResponse.code()).isEqualTo(200);
+
+            var body = getResponse.body().string();
+            var urlCheck = UrlCheckRepository.readAll(urlId).getFirst();
             assertThat(body).contains("Test Title");
             assertThat(body).contains("Test H1");
             assertThat(body).contains("Test description");
+            assertThat(urlCheck.getTitle()).contains("Test Title");
+            assertThat(urlCheck.getH1()).contains("Test H1");
+            assertThat(urlCheck.getDescription()).contains("Test description");
         });
     }
 

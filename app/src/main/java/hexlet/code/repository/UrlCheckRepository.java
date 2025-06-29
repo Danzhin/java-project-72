@@ -13,8 +13,8 @@ import static hexlet.code.utils.DateTimeUtils.timestampToLocalDateTime;
 
 public class UrlCheckRepository extends BaseRepository {
 
-    public static int save(int urlId, int statusCode, String h1,
-                           String title, String description) throws SQLException {
+    public static int save(int urlId, int statusCode, String title, String h1,
+                           String description) throws SQLException {
         var sql = """
             INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -25,8 +25,8 @@ public class UrlCheckRepository extends BaseRepository {
         ) {
             statement.setInt(1, urlId);
             statement.setInt(2, statusCode);
-            statement.setString(3, h1);
-            statement.setString(4, title);
+            statement.setString(3, title);
+            statement.setString(4, h1);
             statement.setString(5, description);
             statement.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
             statement.executeUpdate();

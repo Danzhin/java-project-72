@@ -25,11 +25,11 @@ public class UrlChecksController {
             var response = Unirest.get(url.getName()).asString();
             var statusCode = response.getStatus();
             var document = Jsoup.parse(response.getBody());
-            var h1 = Optional.ofNullable(document.selectFirst("h1")).map(Element::text).orElse(null);
             var title = document.title();
+            var h1 = Optional.ofNullable(document.selectFirst("h1")).map(Element::text).orElse(null);
             var description = Optional.ofNullable(document.selectFirst("meta[name=description]"))
                     .map(el -> el.attr("content")).orElse(null);
-            UrlCheckRepository.save(urlId, statusCode, h1, title, description);
+            UrlCheckRepository.save(urlId, statusCode, title, h1, description);
             ctx.sessionAttribute(ControllerUtils.FLASH, ControllerUtils.URL_CHECK_SUCCESS_MASSAGE);
             ctx.redirect(Routes.urlPath(urlId));
         } catch (UnirestException | NullPointerException e) {

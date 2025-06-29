@@ -91,11 +91,11 @@ public class UrlRepository extends BaseRepository {
 
                 var urlCheckId = resultSet.getInt("url_check_id");
                 var statusCode = resultSet.getInt("status_code");
-                var h1 = resultSet.getString("h1");
                 var title = resultSet.getString("title");
+                var h1 = resultSet.getString("h1");
                 var description = resultSet.getString("description");
                 var urlCheckCreatedAt = timestampToLocalDateTime(resultSet.getTimestamp("url_check_created_at"));
-                var urlCheck = new UrlCheck(urlCheckId, urlId, statusCode, h1, title, description, urlCheckCreatedAt);
+                var urlCheck = new UrlCheck(urlCheckId, urlId, statusCode, title, h1, description, urlCheckCreatedAt);
 
                 result.put(url, urlCheck);
             }
