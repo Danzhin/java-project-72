@@ -66,7 +66,7 @@ public class UrlCheckControllerTest {
     }
 
     @Test
-    public void mockServerTest() throws SQLException, IOException {
+    public void mockServerTest() throws SQLException {
         var testUrl = mockServer.url("/").toString();
         var urlId = UrlRepository.save(testUrl);
 
