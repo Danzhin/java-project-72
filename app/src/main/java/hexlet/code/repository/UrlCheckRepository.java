@@ -2,31 +2,37 @@ package hexlet.code.repository;
 
 import hexlet.code.model.UrlCheck;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hexlet.code.utils.DateTimeUtils.timestampToLocalDateTime;
+
 public class UrlCheckRepository extends BaseRepository {
 
-    public static void save(int urlId, int statusCode, String h1,
-                            String title, String description) throws SQLException {
+    public static int save(int urlId, int statusCode, String h1,
+                           String title, String description) throws SQLException {
         var sql = """
             INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
             """;
         try (
                 var connection = getConnection();
-                var preparedStatement = connection.prepareStatement(sql)
+                var statement = prepareStatement(connection, sql, PreparedStatement.RETURN_GENERATED_KEYS)
         ) {
-            preparedStatement.setInt(1, urlId);
-            preparedStatement.setInt(2, statusCode);
-            preparedStatement.setString(3, h1);
-            preparedStatement.setString(4, title);
-            preparedStatement.setString(5, description);
-            preparedStatement.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
-            preparedStatement.executeUpdate();
+            statement.setInt(1, urlId);
+            statement.setInt(2, statusCode);
+            statement.setString(3, h1);
+            statement.setString(4, title);
+            statement.setString(5, description);
+            statement.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+            statement.executeUpdate();
+            try (var generatedKeys = statement.getGeneratedKeys()) {
+                return generatedKeys.next() ? generatedKeys.getInt(1) : 0;
+            }
         }
     }
 
@@ -34,13 +40,20 @@ public class UrlCheckRepository extends BaseRepository {
         var sql = "SELECT * FROM url_checks WHERE url_id = ?";
         try (
                 var connection = getConnection();
-                var preparedStatement = connection.prepareStatement(sql)
+                var statement = prepareStatement(connection, sql)
         ) {
-            preparedStatement.setInt(1, urlId);
-            try (var resultSet = preparedStatement.executeQuery()) {
+            statement.setInt(1, urlId);
+            try (var resultSet = statement.executeQuery()) {
                 var result = new ArrayList<UrlCheck>();
                 while (resultSet.next()) {
-                    result.add(new UrlCheck(resultSet));
+                    var id = resultSet.getInt("id");
+                    var statusCode = resultSet.getInt("status_code");
+                    var h1 = resultSet.getString("h1");
+                    var title = resultSet.getString("title");
+                    var description = resultSet.getString("description");
+                    var createdAt = timestampToLocalDateTime(resultSet.getTimestamp("created_at"));
+                    var urlCheck = new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
+                    result.add(urlCheck);
                 }
                 return result;
             }

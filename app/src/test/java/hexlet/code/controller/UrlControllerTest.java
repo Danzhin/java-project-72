@@ -39,8 +39,8 @@ public class UrlControllerTest {
     @Test
     public void readAllTest() {
         JavalinTest.test(app, (server, client) -> {
-            UrlRepository.save("https://www.example.com");
-            UrlCheckRepository.save(1, 200, "h1", "title", "description");
+            var urlId = UrlRepository.save("https://www.example.com");
+            UrlCheckRepository.save(urlId, 200, "h1", "title", "description");
             var response = client.get(Routes.URLS_PATH);
             var responseBody = Objects.requireNonNull(response.body()).string();
             assertThat(response.code()).isEqualTo(200);
@@ -52,9 +52,9 @@ public class UrlControllerTest {
     @Test
     public void readByIdTest() {
         JavalinTest.test(app, (server, client) -> {
-            UrlRepository.save("https://www.example.com");
-            UrlCheckRepository.save(1, 200, "h1", "title", "description");
-            var response = client.get(Routes.urlPath(1));
+            var urlId = UrlRepository.save("https://www.example.com");
+            UrlCheckRepository.save(urlId, 200, "h1", "title", "description");
+            var response = client.get(Routes.urlPath(urlId));
             var responseBody = Objects.requireNonNull(response.body()).string();
             assertThat(response.code()).isEqualTo(200);
             assertThat(responseBody).contains("https://www.example.com");

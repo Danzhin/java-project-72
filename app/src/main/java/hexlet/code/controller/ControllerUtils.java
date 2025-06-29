@@ -1,6 +1,6 @@
-package hexlet.code.utils;
+package hexlet.code.controller;
 
-public class FlashAttributes {
+public class ControllerUtils {
 
     public static final String FLASH = "flash";
 

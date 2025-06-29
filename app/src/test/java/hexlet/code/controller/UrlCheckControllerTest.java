@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import static hexlet.code.controller.TestUtils.readFixture;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class UrlCheckControllerTest {
@@ -44,10 +45,10 @@ public class UrlCheckControllerTest {
 
     @Test
     public void createTest() throws SQLException {
-        UrlRepository.save("https://example.com");
+        var urlId = UrlRepository.save("https://example.com");
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "urlId=1&statusCode=200&h1=h1&title=title&description=description";
-            var response = client.post(Routes.urlCheckPath(1), requestBody);
+            var response = client.post(Routes.urlCheckPath(urlId), requestBody);
             var responseBody = Objects.requireNonNull(response.body()).string();
             assertThat(response.code()).isEqualTo(200);
             assertThat(responseBody).contains("1");
@@ -59,8 +60,9 @@ public class UrlCheckControllerTest {
     }
 
     @Test
-    public void mockServerTest() throws SQLException {
-        MockResponse response = new MockResponse().setBody(HTML).setResponseCode(200);
+    public void mockServerTest() throws SQLException, IOException {
+        var html = readFixture("index.html");
+        MockResponse response = new MockResponse().setBody(html).setResponseCode(200);
         mockServer.enqueue(response);
 
         String fakeUrl = mockServer.url("/").toString();
@@ -75,18 +77,6 @@ public class UrlCheckControllerTest {
             assertThat(body).contains("Test description");
         });
     }
-
-    public static final String HTML = """
-                <html>
-                  <head>
-                    <title>Test Title</title>
-                    <meta name="description" content="Test description">
-                  </head>
-                  <body>
-                    <h1>Test H1</h1>
-                  </body>
-                </html>
-                """;
 
 }
 
