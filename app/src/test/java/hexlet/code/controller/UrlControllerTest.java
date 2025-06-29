@@ -39,7 +39,7 @@ public class UrlControllerTest {
     public void readAllTest() {
         JavalinTest.test(app, (server, client) -> {
             var urlId = UrlRepository.save(TestUtils.TEST_URL);
-            UrlCheckRepository.save(urlId, 200, "h1", "title", "description");
+            UrlCheckRepository.save(urlId, 200, "title", "h1", "description");
             var response = client.get(Routes.URLS_PATH);
             var responseBody = response.body().string();
             assertThat(response.code()).isEqualTo(200);
@@ -52,14 +52,14 @@ public class UrlControllerTest {
     public void readByIdTest() {
         JavalinTest.test(app, (server, client) -> {
             var urlId = UrlRepository.save(TestUtils.TEST_URL);
-            UrlCheckRepository.save(urlId, 200, "h1", "title", "description");
+            UrlCheckRepository.save(urlId, 200, "title", "h1", "description");
             var response = client.get(Routes.urlPath(urlId));
             var responseBody = response.body().string();
             assertThat(response.code()).isEqualTo(200);
             assertThat(responseBody).contains(TestUtils.TEST_URL);
             assertThat(responseBody).contains("200");
-            assertThat(responseBody).contains("h1");
             assertThat(responseBody).contains("title");
+            assertThat(responseBody).contains("h1");
             assertThat(responseBody).contains("description");
         });
     }

@@ -16,7 +16,7 @@ public class UrlCheckRepository extends BaseRepository {
     public static int save(int urlId, int statusCode, String title, String h1,
                            String description) throws SQLException {
         var sql = """
-            INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
+            INSERT INTO url_checks (url_id, status_code, title, h1, description, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
             """;
         try (
@@ -48,11 +48,11 @@ public class UrlCheckRepository extends BaseRepository {
                 while (resultSet.next()) {
                     var id = resultSet.getInt("id");
                     var statusCode = resultSet.getInt("status_code");
-                    var h1 = resultSet.getString("h1");
                     var title = resultSet.getString("title");
+                    var h1 = resultSet.getString("h1");
                     var description = resultSet.getString("description");
                     var createdAt = timestampToLocalDateTime(resultSet.getTimestamp("created_at"));
-                    var urlCheck = new UrlCheck(id, urlId, statusCode, h1, title, description, createdAt);
+                    var urlCheck = new UrlCheck(id, urlId, statusCode, title, h1, description, createdAt);
                     result.add(urlCheck);
                 }
                 return result;

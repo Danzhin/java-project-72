@@ -58,8 +58,8 @@ public class UrlRepository extends BaseRepository {
                 url_checks.id AS url_check_id,
                 url_checks.url_id,
                 url_checks.status_code,
-                url_checks.h1,
                 url_checks.title,
+                url_checks.h1,
                 url_checks.description,
                 url_checks.created_at AS url_check_created_at
             FROM urls
@@ -68,8 +68,8 @@ public class UrlRepository extends BaseRepository {
                     url_checks.id,
                     url_checks.url_id,
                     url_checks.status_code,
-                    url_checks.h1,
                     url_checks.title,
+                    url_checks.h1,
                     url_checks.description,
                     url_checks.created_at,
                     ROW_NUMBER() OVER (PARTITION BY url_checks.url_id ORDER BY url_checks.created_at DESC) AS rn

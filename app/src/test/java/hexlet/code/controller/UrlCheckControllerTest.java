@@ -50,7 +50,7 @@ public class UrlCheckControllerTest {
     public void createTest() throws SQLException {
         var urlId = UrlRepository.save(TestUtils.TEST_URL);
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "urlId=1&statusCode=200&h1=h1&title=title&description=description";
+            var requestBody = "urlId=1&statusCode=200&title=title&h1=h1&description=description";
             var postResponse = client.post(Routes.urlCheckPath(urlId), requestBody);
             assertThat(postResponse.code()).isEqualTo(200);
 
@@ -59,8 +59,8 @@ public class UrlCheckControllerTest {
             assertThat(getResponse.code()).isEqualTo(200);
             assertThat(responseBody).contains("1");
             assertThat(responseBody).contains("200");
-            assertThat(responseBody).contains("h1");
             assertThat(responseBody).contains("title");
+            assertThat(responseBody).contains("h1");
             assertThat(responseBody).contains("description");
         });
     }
