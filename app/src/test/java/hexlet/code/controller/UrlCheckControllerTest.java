@@ -30,6 +30,9 @@ public class UrlCheckControllerTest {
     @BeforeAll
     public static void beforeAll() throws IOException {
         mockServer = new MockWebServer();
+        var html = readFixture("index.html");
+        MockResponse response = new MockResponse().setBody(html).setResponseCode(200);
+        mockServer.enqueue(response);
         mockServer.start();
     }
 
@@ -66,10 +69,6 @@ public class UrlCheckControllerTest {
     public void mockServerTest() throws SQLException, IOException {
         var testUrl = mockServer.url("/").toString();
         var urlId = UrlRepository.save(testUrl);
-
-        var html = readFixture("index.html");
-        MockResponse response = new MockResponse().setBody(html).setResponseCode(200);
-        mockServer.enqueue(response);
 
         JavalinTest.test(app, (server, client) -> {
             var postResponse = client.post(Routes.urlCheckPath(urlId));
